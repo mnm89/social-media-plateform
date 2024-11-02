@@ -30,7 +30,7 @@ app.post("/posts", async (req, res) => {
 });
 
 // Starting the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Post service running on port ${PORT}`);
 });
