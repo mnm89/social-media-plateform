@@ -61,12 +61,20 @@ app.post(
     pathRewrite: { "^/login": "/auth/login" },
   })
 );
-
+// Proxy /refresh to the user service
+app.post(
+  "/refresh",
+  createProxyMiddleware({
+    target: `${process.env.USER_SERVICE_URL}`,
+    changeOrigin: true,
+    pathRewrite: { "^/refresh": "/auth/refresh" }, // Routes /refresh to /auth/refresh on the user service
+  })
+);
 // Example protected route for Post Service
 app.use(
   "/users",
   keycloak.protect((token) => {
-    return token.hasRole("user") || token.hasRole("admin");
+    return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
   (req, res) => {
     res.send("Post service endpoint");
@@ -77,7 +85,7 @@ app.use(
 app.use(
   "/posts",
   keycloak.protect((token) => {
-    return token.hasRole("user") || token.hasRole("admin");
+    return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
   (req, res) => {
     res.send("Post service endpoint");
