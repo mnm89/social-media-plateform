@@ -1,9 +1,3 @@
-// Sequelize model example for Profile table
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-
-const Profile = (module.exports = Profile);
-
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
     "Profile",
@@ -24,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "Profiles", // This prevents Sequelize from pluralizing the table name
+      tableName: "profiles",
       timestamps: true,
     }
   );
