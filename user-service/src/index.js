@@ -1,33 +1,39 @@
 const express = require("express");
-const { Pool } = require("pg");
+const profileRoutes = require("./routes/profile");
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
+// Configure session for Keycloak
+const memoryStore = new session.MemoryStore();
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: memoryStore,
+  })
+);
+
+// Keycloak configuration
+const keycloak = new Keycloak(
+  { store: memoryStore },
+  {
+    realm: process.env.KEYCLOAK_REALM,
+    "auth-server-url": process.env.KEYCLOAK_SERVER_URL,
+    "ssl-required": "external",
+    resource: process.env.KEYCLOAK_CLIENT_ID,
+    "confidential-port": 0,
+    "bearer-only": true,
+  }
+);
+
+app.use(keycloak.middleware());
 app.use(express.json());
 
-// PostgreSQL connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-pool
-  .connect()
-  .then(() => console.log("Connected to user database"))
-  .catch((err) => console.error("Database connection error:", err));
-
-// Basic CRUD routes
-app.get("/users", async (req, res) => {
-  const result = await pool.query("SELECT * FROM users");
-  res.json(result.rows);
-});
-
-app.post("/users", async (req, res) => {
-  const { name, email } = req.body;
-  const result = await pool.query(
-    "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
-    [name, email]
-  );
-  res.json(result.rows[0]);
-});
+// Use the profile routes
+app.use("/profile", profileRoutes);
 
 // Starting the server
 const PORT = process.env.PORT || 3000;

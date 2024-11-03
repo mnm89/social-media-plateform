@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: user_user
       POSTGRES_PASSWORD: user_password
-      POSTGRES_DB: user_db
+      POSTGRES_DB: user_service
     ports:
       - "5433:5432"
     volumes:
@@ -82,7 +82,11 @@ services:
     ports:
       - "3001:3000"
     environment:
-      DATABASE_URL: postgres://user_user:user_password@user-db/user_db
+      - DATABASE_URL=postgres://user_user:user_password@user-db/user_service
+      - SESSION_SECRET=${SESSION_SECRET:-session_secret}
+      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
     depends_on:
       - user-db
       - redis
@@ -92,7 +96,7 @@ services:
     ports:
       - "3002:3000"
     environment:
-      DATABASE_URL: postgres://post_user:post_password@post-db/post_db
+      DATABASE_URL: postgres://post_user:post_password@post-db/post_service
     depends_on:
       - post-db
       - redis
