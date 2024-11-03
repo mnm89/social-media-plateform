@@ -43,14 +43,26 @@ app.use((req, res, next) => {
 });
 
 // Example protected route for Post Service
-app.use("/users", keycloak.protect("realm:user"), (req, res) => {
-  res.send("Post service endpoint");
-});
+app.use(
+  "/users",
+  keycloak.protect((token) => {
+    return token.hasRole("user") || token.hasRole("admin");
+  }),
+  (req, res) => {
+    res.send("Post service endpoint");
+  }
+);
 
 // Example protected route for Post Service
-app.use("/posts", keycloak.protect("realm:user"), (req, res) => {
-  res.send("Post service endpoint");
-});
+app.use(
+  "/posts",
+  keycloak.protect((token) => {
+    return token.hasRole("user") || token.hasRole("admin");
+  }),
+  (req, res) => {
+    res.send("Post service endpoint");
+  }
+);
 
 // Fallback route to catch access-denied errors
 app.use((err, req, res, next) => {
