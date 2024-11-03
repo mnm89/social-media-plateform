@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const Keycloak = require("keycloak-connect");
 const dotenv = require("dotenv");
 
@@ -41,6 +42,25 @@ app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
+
+// Open /register and /login routes
+app.use(
+  "/register",
+  createProxyMiddleware({
+    target: `${process.env.USER_SERVICE_URL}`,
+    changeOrigin: true,
+    pathRewrite: { "^/register": "/auth/register" },
+  })
+);
+
+app.use(
+  "/login",
+  createProxyMiddleware({
+    target: `${process.env.USER_SERVICE_URL}`,
+    changeOrigin: true,
+    pathRewrite: { "^/login": "/auth/login" },
+  })
+);
 
 // Example protected route for Post Service
 app.use(
