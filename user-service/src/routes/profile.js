@@ -1,8 +1,8 @@
 // src/routes/profiles.js
 const express = require("express");
 const router = express.Router();
-const keycloak = require("../config/keycloak"); // Assuming you have Keycloak configured
 const getProfile = require("../middleware/getProfile");
+const keycloak = require("../config/keycloak");
 
 // Route to get the authenticated user's profile
 router.get("/", keycloak.protect("realm:user"), getProfile, (req, res) => {
