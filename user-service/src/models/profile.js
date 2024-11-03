@@ -17,7 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       bio: { type: DataTypes.TEXT, allowNull: true },
       address: { type: DataTypes.STRING, allowNull: true },
       phone: { type: DataTypes.STRING, allowNull: true },
-      // Add other fields as needed
+      privacy: {
+        // New column to define visibility options
+        type: DataTypes.JSON,
+        defaultValue: { bio: "public", address: "private", phone: "private" },
+      },
     },
     {
       tableName: "Profiles", // This prevents Sequelize from pluralizing the table name
