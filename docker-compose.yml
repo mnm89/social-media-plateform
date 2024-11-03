@@ -74,6 +74,7 @@ services:
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
+      - USER_SERVICE_URL=http://user-service:3000
     depends_on:
       - keycloak
 
@@ -88,11 +89,12 @@ services:
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
+      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_ID=user-service
+      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_SECRET=NWLR4nfSxybPpDiqcxD8diDqhatgKnZi
     volumes:
-      - ./script/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
+      - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - user-db
-      - redis
 
   post-service:
     build: ./post-service
@@ -102,7 +104,7 @@ services:
     environment:
       DATABASE_URL: postgres://post_user:post_password@post-db/post_service
     volumes:
-      - ./script/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
+      - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - post-db
       - redis
