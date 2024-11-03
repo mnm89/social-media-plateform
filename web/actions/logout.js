@@ -1,10 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { sessionOptions } from "../lib/session";
-import { getIronSession } from "iron-session/edge";
+import { deleteTokens } from "@/lib/session";
 
 export async function logoutAction() {
-  const session = await getIronSession({ cookies }, sessionOptions);
-  await session.destroy();
+  await deleteTokens();
 }

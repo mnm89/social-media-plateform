@@ -1,39 +1,25 @@
 "use server";
+import { getRefreshToken, setTokens } from "@/lib/session";
 
-import { sessionOptions } from "../lib/session";
-import { getIronSession } from "iron-session/edge";
-
-export async function refreshToken(cookies) {
-  const session = await getIronSession({ cookies }, sessionOptions);
-  const { refreshToken } = session.user || {};
+export async function refreshToken() {
+  const refreshToken = await getRefreshToken();
 
   if (!refreshToken) {
     throw new Error("No refresh token found");
   }
 
-  const response = await fetch(
-    `${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        client_id: process.env.KEYCLOAK_CLIENT_ID,
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-      }),
-    }
-  );
+  const response = await fetch(`${process.env.API_GATEWAY_URL}/refresh`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ refreshToken }),
+  });
   if (!response.ok) {
     throw new Error("Invalid token");
   }
   const { access_token, refresh_token } = await response.json();
-
-  // Update session with the new tokens
-  session.user = { accessToken: access_token, refreshToken: refresh_token };
-  await session.save();
+  await setTokens(access_token, refresh_token);
 
   return access_token;
 }
