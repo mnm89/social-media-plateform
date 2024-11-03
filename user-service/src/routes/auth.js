@@ -8,7 +8,7 @@ router.post("/register", async (req, res) => {
   try {
     // Step 1: Obtain an admin access token for the service account
     const tokenResponse = await fetch(
-      `${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
+      `${process.env.KEYCLOAK_SERVER_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
 
     // Step 2: Create the user in Keycloak
     const createUserResponse = await fetch(
-      `${process.env.KEYCLOAK_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users`,
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users`,
       {
         method: "POST",
         headers: {
@@ -61,19 +61,19 @@ router.post("/register", async (req, res) => {
 
 // Endpoint for user login
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     // Authenticate the user with Keycloak
     const loginResponse = await fetch(
-      `${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
+      `${process.env.KEYCLOAK_SERVER_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           client_id: process.env.KEYCLOAK_CLIENT_ID,
           grant_type: "password",
-          username: email,
+          username,
           password,
         }),
       }

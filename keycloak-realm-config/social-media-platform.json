@@ -1,6 +1,28 @@
 {
     "realm": "social-platform",
     "enabled": true,
+    "registrationAllowed": true,
+    "roles": {
+        "realm": [
+            {
+                "name": "user",
+                "description": "User privileges"
+            },
+            {
+                "name": "admin",
+                "description": "Administrator privileges"
+            }
+        ]
+    },
+    "scopeMappings": [
+        {
+            "client": "user-service",
+            "roles": [
+                "manage-users",
+                "view-users"
+            ]
+        }
+    ],
     "clients": [
         {
             "clientId": "frontend-client",
@@ -28,29 +50,6 @@
             }
         }
     ],
-    "roles": {
-        "realm": [
-            {
-                "name": "user",
-                "description": "User role for the social-platform"
-            },
-            {
-                "name": "admin"
-            }
-        ],
-        "client": {
-            "realm-management": [
-                {
-                    "name": "manage-users",
-                    "description": "Allows management of users in the realm"
-                },
-                {
-                    "name": "view-users",
-                    "description": "Allows viewing of users in the realm"
-                }
-            ]
-        }
-    },
     "users": [
         {
             "username": "testuser",
@@ -68,18 +67,6 @@
             ],
             "realmRoles": [
                 "user"
-            ]
-        }
-    ],
-    "defaultRoles": [
-        "user"
-    ],
-    "clientScopeMappings": [
-        {
-            "client": "user-service",
-            "roles": [
-                "manage-users",
-                "view-users"
             ]
         }
     ]

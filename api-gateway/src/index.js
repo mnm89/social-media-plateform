@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 // Open /register and /login routes
-app.use(
+app.post(
   "/register",
   createProxyMiddleware({
     target: `${process.env.USER_SERVICE_URL}`,
@@ -53,7 +53,7 @@ app.use(
   })
 );
 
-app.use(
+app.post(
   "/login",
   createProxyMiddleware({
     target: `${process.env.USER_SERVICE_URL}`,
