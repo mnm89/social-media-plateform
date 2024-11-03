@@ -79,6 +79,7 @@ services:
 
   user-service:
     build: ./user-service
+    entrypoint: ["/app/wait-for-it.sh", "user-db:5432", "--", "npm", "start"]
     ports:
       - "3001:3000"
     environment:
@@ -87,16 +88,21 @@ services:
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
+    volumes:
+      - ./script/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - user-db
       - redis
 
   post-service:
     build: ./post-service
+    entrypoint: ["/app/wait-for-it.sh", "user-db:5432", "--", "npm", "start"]
     ports:
       - "3002:3000"
     environment:
       DATABASE_URL: postgres://post_user:post_password@post-db/post_service
+    volumes:
+      - ./script/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - post-db
       - redis
