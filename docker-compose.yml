@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_USER: post_user
       POSTGRES_PASSWORD: post_password
-      POSTGRES_DB: post_db
+      POSTGRES_DB: post_service
     ports:
       - "5434:5432"
     volumes:
