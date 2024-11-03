@@ -10,17 +10,46 @@
             "redirectUris": [
                 "http://localhost:3000/*"
             ]
+        },
+        {
+            "clientId": "user-service",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "clientAuthenticatorType": "client-secret",
+            "secret": "NWLR4nfSxybPpDiqcxD8diDqhatgKnZi",
+            "publicClient": false,
+            "serviceAccountsEnabled": true,
+            "standardFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "bearerOnly": false,
+            "fullScopeAllowed": false,
+            "attributes": {
+                "client_credentials_client_secret": "NWLR4nfSxybPpDiqcxD8diDqhatgKnZi"
+            }
         }
     ],
     "roles": {
         "realm": [
             {
-                "name": "user"
+                "name": "user",
+                "description": "User role for the social-platform"
             },
             {
                 "name": "admin"
             }
-        ]
+        ],
+        "client": {
+            "realm-management": [
+                {
+                    "name": "manage-users",
+                    "description": "Allows management of users in the realm"
+                },
+                {
+                    "name": "view-users",
+                    "description": "Allows viewing of users in the realm"
+                }
+            ]
+        }
     },
     "users": [
         {
@@ -39,6 +68,18 @@
             ],
             "realmRoles": [
                 "user"
+            ]
+        }
+    ],
+    "defaultRoles": [
+        "user"
+    ],
+    "clientScopeMappings": [
+        {
+            "client": "user-service",
+            "roles": [
+                "manage-users",
+                "view-users"
             ]
         }
     ]
