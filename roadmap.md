@@ -11,15 +11,15 @@
 - **Common Components**:
   - **API Gateway**: Manages routing and authentication across microservices.
   - **Event Streaming**: Uses RabbitMQ or Kafka to handle asynchronous events like notifications and recommendations.
-  - **Database**:
-  - **Postgres** for relational data (user profiles, posts).
-  - **Redis** for caching and real-time data.
+  - **Postgres**: for relational data (user profiles, posts).
+  - **Redis**: for caching and real-time data.
+  - **Keycloak**: manages authentication across all services, avoiding duplicate auth logic in each microservice.
   - **Load Balancer**: For efficient distribution across microservices.
 
 ## **Development Phases**
 
 - **Phase 1**: Set up the core microservices (User and Post) with basic CRUD operations.
-- **Phase 2**: Integrate the API Gateway and handle user authentication.
+- **Phase 2**: Integrate the API Gateway and handle user authentication with keycloak.
 - **Phase 3**: Implement real-time notifications with the Notification Service and message broker.
 - **Phase 4**: Develop the Recommendation Service and fine-tune the platform for performance.
 
@@ -28,5 +28,6 @@
 - **Backend**: Node.js or Go
 - **Frontend**: Next.js or Angular
 - **Data**: Postgres, Redis
-- **Event Broker**: RabbitMQ/Kafka
+- **Event Broker**: RabbitMQ
+- **Authentication**: Keycloak
 - **Containerization**: Docker Compose

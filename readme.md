@@ -6,7 +6,7 @@
 
 ## Tech Stack
 
-    Node.js for backend services, React/Next.js for the frontend, RabbitMQ/Kafka for event streaming, and Redis/Postgres for data
+    Node.js for backend services, React/Next.js for the frontend, RabbitMQ for event streaming, Redis/Postgres for data, and Keycloak for authentication
 
 ## Features
 

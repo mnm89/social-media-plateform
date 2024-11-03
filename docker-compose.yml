@@ -21,6 +21,15 @@ services:
     volumes:
       - post_data:/var/lib/postgresql/data
 
+  keycloak-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_password
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+
   notification-cache:
     image: redis:latest
     ports:
@@ -31,6 +40,25 @@ services:
     ports:
       - "6379:6379"
 
+  keycloak:
+    image: keycloak/keycloak:latest
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db/keycloak
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_password
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin} # Admin username
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin_password} # Admin password
+      KC_HOSTNAME_STRICT: ${KC_HOSTNAME_STRICT:-false} # Allows HTTP in development mode
+      KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true} # Explicitly enable HTTP
+    command: start --import-realm  --http-enabled=${KC_HTTP_ENABLED:-true}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
+    volumes:
+      - ./keycloak-realm-config/:/opt/keycloak/data/import/ # Import realm files
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -40,17 +68,19 @@ services:
   api-gateway:
     build: ./api-gateway
     ports:
-      - "80:80" # Expose API Gateway on host port 80
+      - "80:3000"
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET:-session_secret}
+      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
     depends_on:
-      - user-service
-      - post-service
-      - notification-service
-      - recommendation-service
+      - keycloak
 
   user-service:
     build: ./user-service
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       DATABASE_URL: postgres://user_user:user_password@user-db/user_db
     depends_on:
@@ -60,7 +90,7 @@ services:
   post-service:
     build: ./post-service
     ports:
-      - "3001:3000"
+      - "3002:3000"
     environment:
       DATABASE_URL: postgres://post_user:post_password@post-db/post_db
     depends_on:
@@ -70,7 +100,7 @@ services:
   notification-service:
     build: ./notification-service
     ports:
-      - "3002:3000"
+      - "3003:3000"
     environment:
       REDIS_HOST: notification-cache
     depends_on:
@@ -80,7 +110,7 @@ services:
   recommendation-service:
     build: ./recommendation-service
     ports:
-      - "3003:3000"
+      - "3004:3000"
     environment:
       REDIS_HOST: redis
     depends_on:
@@ -90,3 +120,4 @@ services:
 volumes:
   user_data:
   post_data:
+  keycloak_data:
