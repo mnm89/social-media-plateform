@@ -51,7 +51,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin_password} # Admin password
       KC_HOSTNAME_STRICT: ${KC_HOSTNAME_STRICT:-false} # Allows HTTP in development mode
       KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true} # Explicitly enable HTTP
-      KC_LOG_LEVEL: ${KC_LOG_LEVEL:-DEBUG}
+      #KC_LOG_LEVEL: ${KC_LOG_LEVEL:-DEBUG}
       KC_LOG_CONSOLE_OUTPUT: ${KC_LOG_CONSOLE_OUTPUT:-default}
     command: start --import-realm  --http-enabled=${KC_HTTP_ENABLED:-true}
     ports:
@@ -69,16 +69,28 @@ services:
 
   api-gateway:
     build: ./api-gateway
+    entrypoint:
+      [
+        "/app/wait-for-it.sh",
+        "--timeout=60",
+        "keycloak:8080",
+        "--",
+        "npm",
+        "start",
+      ]
     ports:
       - "80:3000"
     environment:
       - SESSION_SECRET=${SESSION_SECRET:-session_secret}
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
-      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-media-platform}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
       - USER_SERVICE_URL=http://user-service:3000
+    volumes:
+      - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - keycloak
+      - user-service
 
   user-service:
     build: ./user-service
@@ -89,10 +101,10 @@ services:
       - DATABASE_URL=postgres://user_user:user_password@user-db/user_service
       - SESSION_SECRET=${SESSION_SECRET:-session_secret}
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
-      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-platform}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-social-media-platform}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-frontend-client}
-      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_ID=user-service
-      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_SECRET=NWLR4nfSxybPpDiqcxD8diDqhatgKnZi
+      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_ID=user-management-service
+      - KEYCLOAK_SERVICE_ACCOUNT_CLIENT_SECRET=YXbgBO3JcrBOqfpzoMfQf2gPnfZrBTuw
     volumes:
       - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
