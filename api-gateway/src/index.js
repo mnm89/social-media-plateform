@@ -43,7 +43,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Open /register and /login routes
+// Open /register, /login and /refresh  routes
 app.post(
   "/register",
   createProxyMiddleware({
@@ -52,7 +52,6 @@ app.post(
     pathRewrite: { "^/register": "/auth/register" },
   })
 );
-
 app.post(
   "/login",
   createProxyMiddleware({
@@ -61,15 +60,15 @@ app.post(
     pathRewrite: { "^/login": "/auth/login" },
   })
 );
-// Proxy /refresh to the user service
 app.post(
   "/refresh",
   createProxyMiddleware({
     target: `${process.env.USER_SERVICE_URL}`,
     changeOrigin: true,
-    pathRewrite: { "^/refresh": "/auth/refresh" }, // Routes /refresh to /auth/refresh on the user service
+    pathRewrite: { "^/refresh": "/auth/refresh" },
   })
 );
+
 // Example protected route for Post Service
 app.use(
   "/users",
