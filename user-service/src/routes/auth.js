@@ -21,10 +21,12 @@ router.post("/register", async (req, res) => {
     );
 
     if (!tokenResponse.ok) {
+      console.error("Error obtaining service token:", tokenResponse.status);
       return res.status(500).json({ error: "Failed to obtain access token" });
     }
 
     const { access_token } = await tokenResponse.json();
+    console.log("Obtained service account token:", access_token);
 
     // Step 2: Create the user in Keycloak
     const createUserResponse = await fetch(
@@ -49,6 +51,7 @@ router.post("/register", async (req, res) => {
     );
 
     if (!createUserResponse.ok) {
+      console.error("Error creating user account:", createUserResponse.status);
       return res.status(500).json({ error: "Failed to create user" });
     }
 
