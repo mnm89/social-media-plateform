@@ -51,6 +51,8 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin_password} # Admin password
       KC_HOSTNAME_STRICT: ${KC_HOSTNAME_STRICT:-false} # Allows HTTP in development mode
       KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true} # Explicitly enable HTTP
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL:-DEBUG}
+      KC_LOG_CONSOLE_OUTPUT: ${KC_LOG_CONSOLE_OUTPUT:-default}
     command: start --import-realm  --http-enabled=${KC_HTTP_ENABLED:-true}
     ports:
       - "8080:8080"
