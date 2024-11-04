@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { registerAction } from "@/actions/register";
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");
@@ -20,25 +21,19 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  const [isPending, startTransition] = useTransition();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed");
+    startTransition(async () => {
+      try {
+        await registerAction(firstName, lastName, email, password);
+        router.push("/account-settings"); // Redirect after successful login
+      } catch (err) {
+        setError(err.message);
       }
-
-      // Redirect to login after successful registration
-      router.push("/login");
-    } catch (err) {
-      setError(err.message);
-    }
+    });
   };
 
   return (
@@ -99,8 +94,8 @@ export default function RegisterPage() {
               />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
-            <Button type="submit" className="w-full">
-              Register
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Creating account..." : "Register"}
             </Button>
           </form>
         </CardContent>
