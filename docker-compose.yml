@@ -91,6 +91,7 @@ services:
     depends_on:
       - keycloak
       - user-service
+      - post-service
 
   user-service:
     build: ./user-service
@@ -127,7 +128,6 @@ services:
       - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       - post-db
-      - redis
 
   notification-service:
     build: ./notification-service
