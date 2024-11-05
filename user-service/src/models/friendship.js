@@ -4,11 +4,6 @@ module.exports = (sequelize) => {
   const Friendship = sequelize.define(
     "Friendship",
     {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-      },
       userId: {
         type: DataTypes.STRING,
         allowNull: false,
