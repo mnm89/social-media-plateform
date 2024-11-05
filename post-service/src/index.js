@@ -1,30 +1,18 @@
+require("dotenv").config();
 const express = require("express");
+const session = require("./config/session");
+const keycloak = require("./config/keycloak");
+const postRoutes = require("./routes/posts");
+const publicRoutes = require("./routes/public");
 
 const app = express();
-const memoryStore = new session.MemoryStore();
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: memoryStore,
-  })
-);
 
-const keycloak = new Keycloak(
-  { store: memoryStore },
-  {
-    realm: process.env.KEYCLOAK_REALM,
-    "auth-server-url": process.env.KEYCLOAK_SERVER_URL,
-    resource: process.env.KEYCLOAK_CLIENT_ID,
-    "bearer-only": true,
-    "ssl-required": "external",
-    "confidential-port": 0,
-  }
-);
+app.use(session.middleware());
 app.use(keycloak.middleware());
 app.use(express.json());
+
 app.use("/posts", postRoutes);
+app.use("/public", publicRoutes);
 
 // Starting the server
 const PORT = process.env.PORT || 3000;

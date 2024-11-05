@@ -15,3 +15,22 @@
 3. **Routes and Middleware**:
    - **Protected Routes**: Use `keycloak-connect` to restrict post creation, updating, and deletion to authenticated users.
    - **Public and Private Access**: Implement logic to handle post visibility based on the `visibility` field.
+
+4. **Backend Visibility Logic**:
+   - **Public**: Accessible by everyone, including visitors.
+   - **Private**: Accessible by all logged-in/registered users.
+   - **Friends-Only**: Accessible only by friends of the post author.
+
+## Suggested API Endpoint Logic
+
+- **Homepage (`GET /public`)**:
+  - Retrieve all public posts for visitors.
+- **Homepage (`GET /posts`)**:
+  - For logged-in users, retrieve both public and private posts.
+  - Filter for friends-only posts based on the relationship between the post author and the user.
+
+- **Post Actions (Like, Comment)**:
+  - Allow actions only if the user meets the visibility requirements:
+    - Public posts: Actions enabled for all logged-in users.
+    - Private posts: Actions enabled for all logged-in users.
+    - Friends-only posts: Actions enabled if the user is friends with the post author.
