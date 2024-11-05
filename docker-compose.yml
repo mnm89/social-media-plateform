@@ -86,6 +86,7 @@ services:
       - KEYCLOAK_REALM=social-media-platform
       - KEYCLOAK_CLIENT_ID=web-client
       - USER_SERVICE_URL=http://user-service:3000
+      - POST_SERVICE_URL=http://post-service:3000
     volumes:
       - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:

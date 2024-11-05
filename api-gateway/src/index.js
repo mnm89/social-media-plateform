@@ -69,26 +69,43 @@ app.post(
   })
 );
 
-// Example protected route for Post Service
+// public posts endpoint
+app.get(
+  "/public",
+  createProxyMiddleware({
+    target: `${process.env.POST_SERVICE_URL}`,
+    changeOrigin: true,
+  })
+);
+
+// Protected routes for User Service
 app.use(
   "/users",
   keycloak.protect((token) => {
     return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
-  (req, res) => {
-    res.send("Post service endpoint");
-  }
+  createProxyMiddleware({
+    target: `${process.env.USER_SERVICE_URL}`, // URL of the user service
+    changeOrigin: true,
+    pathRewrite: {
+      "^/users": "", // Remove `/users` from the forwarded path
+    },
+  })
 );
 
-// Example protected route for Post Service
+// Protected routes for User Service
 app.use(
   "/posts",
   keycloak.protect((token) => {
     return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
-  (req, res) => {
-    res.send("Post service endpoint");
-  }
+  createProxyMiddleware({
+    target: `${process.env.POST_SERVICE_URL}`, // URL of the post service
+    changeOrigin: true,
+    pathRewrite: {
+      "^/posts": "", // Remove `/posts` from the forwarded path
+    },
+  })
 );
 
 // Fallback route to catch access-denied errors
