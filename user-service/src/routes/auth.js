@@ -13,8 +13,8 @@ router.post("/register", async (req, res) => {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.KEYCLOAK_SERVICE_ACCOUNT_CLIENT_ID,
-          client_secret: process.env.KEYCLOAK_SERVICE_ACCOUNT_CLIENT_SECRET,
+          client_id: process.env.KEYCLOAK_CLIENT_ID,
+          client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
           grant_type: "client_credentials",
         }),
       }
@@ -26,7 +26,6 @@ router.post("/register", async (req, res) => {
     }
 
     const { access_token } = await tokenResponse.json();
-    console.log("Obtained service account token:", access_token);
 
     // Step 2: Create the user in Keycloak
     const createUserResponse = await fetch(
@@ -61,7 +60,6 @@ router.post("/register", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // Endpoint for user login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -74,7 +72,7 @@ router.post("/login", async (req, res) => {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.KEYCLOAK_CLIENT_ID,
+          client_id: process.env.KEYCLOAK_WEB_CLIENT_ID,
           grant_type: "password",
           username,
           password,
@@ -93,7 +91,6 @@ router.post("/login", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // Refresh token route
 router.post("/refresh", async (req, res) => {
   const { refreshToken } = req.body;
@@ -110,7 +107,7 @@ router.post("/refresh", async (req, res) => {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.KEYCLOAK_CLIENT_ID,
+          client_id: process.env.KEYCLOAK_WEB_CLIENT_ID,
           grant_type: "refresh_token",
           refresh_token: refreshToken,
         }),

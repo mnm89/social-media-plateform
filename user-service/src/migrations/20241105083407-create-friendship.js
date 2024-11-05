@@ -1,0 +1,37 @@
+"use strict";
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("friendships", {
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      userId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      friendId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      status: {
+        type: Sequelize.ENUM("pending", "accepted", "blocked"),
+        allowNull: false,
+        defaultValue: "pending",
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+    });
+  },
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("friendships");
+  },
+};
