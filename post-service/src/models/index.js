@@ -14,15 +14,15 @@ Comment.initModel(sequelize);
 Like.initModel(sequelize);
 
 // Define associations after all models are initialized
-Post.hasMany(Comment, { foreignKey: "postId" });
-Comment.belongsTo(Post, { foreignKey: "postId" });
+Post.hasMany(Comment, { foreignKey: "postId", as: "comments" });
+Comment.belongsTo(Post, { foreignKey: "postId", as: "post" });
 
 // Enable nested comments (replies)
 Comment.hasMany(Comment, { as: "replies", foreignKey: "parentId" });
 Comment.belongsTo(Comment, { as: "parent", foreignKey: "parentId" });
 
-Post.hasMany(Like, { foreignKey: "postId" });
-Like.belongsTo(Post, { foreignKey: "postId" });
+Post.hasMany(Like, { foreignKey: "postId", as: "likes" });
+Like.belongsTo(Post, { foreignKey: "postId", as: "post" });
 
 // Export initialized models
 module.exports = {
