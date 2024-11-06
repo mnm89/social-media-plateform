@@ -18,6 +18,7 @@
         "kauth",
         "keycloak",
         "multivalued",
-        "resave"
+        "resave",
+        "UUIDV"
     ]
 }
