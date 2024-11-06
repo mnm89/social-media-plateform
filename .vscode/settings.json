@@ -17,6 +17,7 @@
         "checkperiod",
         "kauth",
         "keycloak",
+        "multivalued",
         "resave"
     ]
 }
