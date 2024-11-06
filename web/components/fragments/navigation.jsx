@@ -1,27 +1,28 @@
 "use client";
 
-import {  useTransition , useState } from "react";
+import Cookies from "js-cookie";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { logoutAction } from "@/actions/logout";
+import { parseToken, isTokenExpired } from "@/lib/token";
+import useTokenManagement from "@/components/hooks/useTokenManagement";
 
-export default function Navbar({ isAuthenticated, userName }) {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  useTokenManagement();
+  const isAuthenticated = !isTokenExpired(Cookies.get("access_token"));
+  const userName = parseToken(Cookies.get("access_token")).preferred_username;
 
   const handleLogout = async () => {
-
-    startTransition(async () => {
-        try {
-          await logoutAction()
-          router.push("/");
-        } catch (err) {
-          console.error(err)
-        }})
-    
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    window.location.href = "/";
   };
 
   return (
@@ -45,8 +46,8 @@ export default function Navbar({ isAuthenticated, userName }) {
                     Account Settings
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} disabled={isPending}>
-                  {isPending?'Logging you out ...':'Logout'}
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

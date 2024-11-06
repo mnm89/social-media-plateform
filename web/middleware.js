@@ -1,7 +1,6 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { refreshToken } from "@/actions/refresh";
 import { isTokenExpired } from "@/lib/token";
-import { getAccessToken } from "@/lib/session";
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -12,18 +11,13 @@ export async function middleware(req) {
     return NextResponse.next(); // Allow access without authentication
   }
   // Define paths to exclude from authentication check
-  const token = await getAccessToken();
+  const token = await (await cookies()).get("access_token")?.value;
 
   if (token && isTokenExpired(token)) {
-    try {
-      await refreshToken();
-      return NextResponse.next();
-    } catch (error) {
-      console.error("Middleware token refresh failed:", error);
-      const loginUrl = req.nextUrl.clone();
-      loginUrl.pathname = "/login";
-      return NextResponse.redirect(loginUrl);
-    }
+    console.error("Middleware token expiry detected");
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

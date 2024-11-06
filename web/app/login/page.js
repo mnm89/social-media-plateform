@@ -10,6 +10,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import Cookies from "js-cookie";
 import { Label } from "@/components/ui/label";
 import { loginAction } from "@/actions/login";
 
@@ -26,7 +27,12 @@ export default function LoginPage() {
 
     startTransition(async () => {
       try {
-        await loginAction(username, password);
+        const { access_token, refresh_token } = await loginAction(
+          username,
+          password
+        );
+        Cookies.set("access_token", access_token);
+        Cookies.set("refresh_token", refresh_token);
         router.push(
           searchParams.has("redirectTo")
             ? searchParams.get("redirectTo")

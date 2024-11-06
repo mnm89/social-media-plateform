@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import {
   Card,
   CardHeader,
@@ -7,10 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPosts, getPublicContent } from "@/lib/api";
-import { getAccessToken } from "@/lib/session";
 import Link from "next/link";
+import MarkdownIt from "markdown-it";
 
 const PostCard = ({ post }) => {
+  const content = post.content.slice(0, 600);
+  const md = new MarkdownIt();
+  const htmlContent = md.render(content);
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader>
@@ -18,7 +22,11 @@ const PostCard = ({ post }) => {
         <p className="text-sm text-gray-500">By {post.authorName}</p>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-700">{post.content.slice(0, 100)}...</p>
+        <div
+          className="text-gray-700 h-72 overflow-hidden"
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+        ></div>
+        <p> ... </p>
       </CardContent>
       <CardFooter>
         <Button asChild variant="link">
@@ -30,7 +38,7 @@ const PostCard = ({ post }) => {
 };
 
 export default async function Home() {
-  const token = await getAccessToken();
+  const token = (await cookies()).get("access_token")?.value;
   const posts = token ? await getPosts(token) : await getPublicContent();
   return (
     <div className="container mx-auto px-4 py-8">

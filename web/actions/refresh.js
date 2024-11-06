@@ -1,8 +1,8 @@
 "use server";
-import { getRefreshToken, setTokens } from "@/lib/session";
+import { cookies } from "next/headers";
 
 export async function refreshToken() {
-  const refreshToken = await getRefreshToken();
+  const refreshToken = (await cookies()).get("refreshToken")?.value;
 
   if (!refreshToken) {
     throw new Error("No refresh token found");
@@ -19,7 +19,6 @@ export async function refreshToken() {
     throw new Error("Invalid token");
   }
   const { access_token, refresh_token } = await response.json();
-  await setTokens(access_token, refresh_token);
 
-  return access_token;
+  return { access_token, refresh_token };
 }

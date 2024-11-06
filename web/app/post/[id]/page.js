@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/lib/session";
+import { cookies } from "next/headers";
 import { UnauthorizedCard } from "@/components/fragments/unauthorized";
 import { getPost } from "@/lib/api";
 import {
@@ -7,15 +7,16 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp } from "lucide-react";
 import { parseToken } from "@/lib/token";
+import MarkdownIt from "markdown-it";
 
 export default async function Page({ params }) {
   const id = (await params).id;
-  const token = await getAccessToken();
+  const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
     return (
@@ -25,10 +26,10 @@ export default async function Page({ params }) {
     );
   }
   const { sub } = parseToken(token);
-  const { authorName, userId, createdAt, title, content } = await getPost(
-    token,
-    id
-  );
+  const { authorName, userId, createdAt, title, content, authorAvatar } =
+    await getPost(token, id);
+  const md = new MarkdownIt();
+  const htmlContent = md.render(content);
   const likesCount = 5;
   const comments = [];
 
@@ -37,11 +38,25 @@ export default async function Page({ params }) {
       <Card className="shadow-md rounded-lg">
         <CardHeader>
           <div className="flex items-center space-x-4">
-            <Avatar
-              src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
-              alt={authorName}
-              size="lg"
-            />
+            <Avatar>
+              <AvatarImage src={authorAvatar} />
+              <AvatarFallback>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="12" cy="8" r="4" fill="#fff" />
+                  <path
+                    d="M4 20c0-3.5 4-5.5 8-5.5s8 2 8 5.5"
+                    stroke="#fff"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+              </AvatarFallback>
+            </Avatar>
             <div>
               <h2 className="text-lg font-semibold">{authorName}</h2>
               <p className="text-sm text-gray-500">
@@ -53,7 +68,10 @@ export default async function Page({ params }) {
 
         <CardContent>
           <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          <p className="mt-2 text-gray-700 leading-relaxed">{content}</p>
+          <div
+            className="mt-2 text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          ></div>
         </CardContent>
 
         <CardFooter className="flex items-center space-x-2">

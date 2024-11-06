@@ -1,5 +1,4 @@
 "use server";
-import { setTokens } from "@/lib/session";
 
 export async function loginAction(username, password) {
   const response = await fetch(`${process.env.API_GATEWAY_URL}/login`, {
@@ -18,5 +17,5 @@ export async function loginAction(username, password) {
   }
 
   const { access_token, refresh_token } = await response.json();
-  await setTokens(access_token, refresh_token);
+  return { access_token, refresh_token };
 }

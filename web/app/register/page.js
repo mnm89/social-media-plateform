@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export default function RegisterPage() {
     startTransition(async () => {
       try {
         await registerAction(firstName, lastName, email, password);
-        router.push("/account-settings"); // Redirect after successful login
+        router.replace("/login");
       } catch (err) {
         setError(err.message);
       }

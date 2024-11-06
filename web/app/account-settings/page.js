@@ -1,13 +1,13 @@
+import { cookies } from "next/headers";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/fragments/unauthorized";
-import { getAccessToken } from "@/lib/session";
 
 export default async function ProtectedPage() {
-  const token = await getAccessToken();
+  const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
     return (
