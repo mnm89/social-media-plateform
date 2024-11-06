@@ -1,4 +1,5 @@
 const express = require("express");
+const { getAccessToken } = require("../helpers/accessToken");
 const router = express.Router();
 
 // Endpoint for user registration
@@ -7,25 +8,7 @@ router.post("/register", async (req, res) => {
 
   try {
     // Step 1: Obtain an admin access token for the service account
-    const tokenResponse = await fetch(
-      `${process.env.KEYCLOAK_SERVER_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          client_id: process.env.KEYCLOAK_CLIENT_ID,
-          client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
-          grant_type: "client_credentials",
-        }),
-      }
-    );
-
-    if (!tokenResponse.ok) {
-      console.error("Error obtaining service token:", tokenResponse.status);
-      return res.status(500).json({ error: "Failed to obtain access token" });
-    }
-
-    const { access_token } = await tokenResponse.json();
+    const token = await getAccessToken();
 
     // Step 2: Create the user in Keycloak
     const createUserResponse = await fetch(
@@ -34,7 +17,7 @@ router.post("/register", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: email,

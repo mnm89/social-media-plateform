@@ -1,9 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-const profileRoutes = require("./routes/profile");
-const authRoutes = require("./routes/auth");
 const session = require("./config/session");
 const keycloak = require("./config/keycloak");
+const authRoutes = require("./routes/auth");
+const profileRoutes = require("./routes/profile");
+const userRoutes = require("./routes/user");
 const friendshipRoutes = require("./routes/friendship");
 
 const app = express();
@@ -12,12 +13,14 @@ app.use(session.middleware());
 app.use(keycloak.middleware());
 app.use(express.json());
 
-// Use the profile routes
-app.use("/profile", profileRoutes);
 // Use the auth routes
 app.use("/auth", authRoutes);
+// Use the profile routes
+app.use("/profiles", profileRoutes);
 // Use the friends routes
-app.use("/friendship", friendshipRoutes);
+app.use("/users", userRoutes);
+// Use the friends routes
+app.use("/friendships", friendshipRoutes);
 
 // Starting the server
 const PORT = process.env.PORT || 3000;

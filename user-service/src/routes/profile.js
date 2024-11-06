@@ -32,35 +32,4 @@ router.delete("/", getProfile, async (req, res) => {
     res.status(500).json({ error: "Failed to delete profile" });
   }
 });
-// Route to get another user's profile by user ID
-router.get("/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Find the profile by Keycloak user ID
-    const profile = await Profile.findOne({
-      where: { userId },
-    });
-
-    if (!profile) {
-      return res.status(404).json({ message: "Profile not found" });
-    }
-
-    const { bio, address, phone, privacy } = profile;
-
-    // Build the response based on privacy settings
-    const response = {
-      userId,
-      bio: privacy.bio === "public" ? bio : null,
-      address: privacy.address === "public" ? address : null,
-      phone: privacy.phone === "public" ? phone : null,
-    };
-
-    res.json(response);
-  } catch (error) {
-    console.error("Error retrieving profile:", error);
-    res.status(500).json({ error: "Failed to retrieve profile" });
-  }
-});
-
 module.exports = router;
