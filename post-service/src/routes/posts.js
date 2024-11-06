@@ -1,12 +1,10 @@
 const express = require("express");
-const keycloak = require("../config/keycloak");
 const { Post, Comment, Like } = require("../models"); // Import the Post model
 const checkOwnership = require("../middleware/checkOwnership");
 const { getUserDetails, getUserAuthorName } = require("../helpers/postUser");
 const { isFriend } = require("../helpers/checkFriendship");
 
 const router = express.Router();
-router.use(keycloak.protect("realm:user"));
 // Create a new post
 router.post("/", async (req, res) => {
   const { title, content, visibility } = req.body;

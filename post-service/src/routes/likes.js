@@ -1,9 +1,7 @@
 const express = require("express");
-const keycloak = require("../config/keycloak");
 const { Like } = require("../models");
 
 const router = express.Router();
-router.use(keycloak.protect("realm:user"));
 
 router.post("/:postId", keycloak.protect(), async (req, res) => {
   const { postId } = req.params;
