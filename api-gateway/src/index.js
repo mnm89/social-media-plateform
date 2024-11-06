@@ -87,9 +87,6 @@ app.use(
   createProxyMiddleware({
     target: `${process.env.USER_SERVICE_URL}`, // URL of the user service
     changeOrigin: true,
-    pathRewrite: {
-      "^/users": "", // Remove `/users` from the forwarded path
-    },
   })
 );
 
@@ -102,9 +99,6 @@ app.use(
   createProxyMiddleware({
     target: `${process.env.POST_SERVICE_URL}`, // URL of the post service
     changeOrigin: true,
-    pathRewrite: {
-      "^/posts": "", // Remove `/posts` from the forwarded path
-    },
   })
 );
 
