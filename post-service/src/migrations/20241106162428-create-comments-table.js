@@ -1,24 +1,19 @@
 "use strict";
 
 module.exports = {
-  /**
-   *
-   * @param {*} queryInterface
-   * @param {import('sequelize').Sequelize} Sequelize
-   */
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("posts", {
+    await queryInterface.createTable("comments", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.fn("gen_random_uuid"),
         allowNull: false,
         primaryKey: true,
       },
-      userId: {
-        type: Sequelize.STRING,
+      postId: {
+        type: Sequelize.UUID,
         allowNull: false,
       },
-      title: {
+      userId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -26,25 +21,24 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      visibility: {
-        type: Sequelize.ENUM("public", "private", "friends-only"),
-        allowNull: false,
-        defaultValue: "public",
+      parentId: {
+        type: Sequelize.UUID,
+        allowNull: true,
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("posts");
+    await queryInterface.dropTable("comments");
   },
 };
