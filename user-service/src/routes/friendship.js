@@ -104,7 +104,7 @@ router.get("/check", keycloak.protect("realm:service"), async (req, res) => {
     res.json({ isFriend: !!friendship });
   } catch (error) {
     console.error("Error checking friendship:", error);
-    res.status(500).json({ error: "Failed to check friendship status" });
+    res.status(500).json({ message: "Failed to check friendship status" });
   }
 });
 

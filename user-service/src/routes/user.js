@@ -23,7 +23,7 @@ router.get("/:id", async (req, res) => {
     );
     if (!userResponse.ok) {
       console.error("Error retrieving user account:", userResponse.status);
-      return res.status(500).json({ error: "Failed to find user" });
+      return res.status(500).json({ message: "Failed to find user" });
     }
 
     const user = await userResponse.json();
@@ -53,7 +53,7 @@ router.get("/:id", async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error("Error retrieving profile:", error);
-    res.status(500).json({ error: "Failed to retrieve profile" });
+    res.status(500).json({ message: "Failed to retrieve profile" });
   }
 });
 module.exports = router;

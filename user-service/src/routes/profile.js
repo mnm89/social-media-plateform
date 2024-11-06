@@ -19,7 +19,7 @@ router.put("/", getProfile, async (req, res) => {
     res.json(req.profile);
   } catch (error) {
     console.error("Error updating profile:", error);
-    res.status(500).json({ error: "Failed to update profile" });
+    res.status(500).json({ message: "Failed to update profile" });
   }
 });
 // Route to delete the authenticated user's profile
@@ -29,7 +29,7 @@ router.delete("/", getProfile, async (req, res) => {
     res.status(204).send(); // No content
   } catch (error) {
     console.error("Error deleting profile:", error);
-    res.status(500).json({ error: "Failed to delete profile" });
+    res.status(500).json({ message: "Failed to delete profile" });
   }
 });
 module.exports = router;

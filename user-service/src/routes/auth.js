@@ -34,13 +34,13 @@ router.post("/register", async (req, res) => {
 
     if (!createUserResponse.ok) {
       console.error("Error creating user account:", createUserResponse.status);
-      return res.status(500).json({ error: "Failed to create user" });
+      return res.status(500).json({ message: "Failed to create user" });
     }
 
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Registration error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 // Endpoint for user login
@@ -64,14 +64,14 @@ router.post("/login", async (req, res) => {
     );
 
     if (!loginResponse.ok) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const tokens = await loginResponse.json();
     return res.status(200).json(tokens);
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 // Refresh token route
@@ -79,7 +79,7 @@ router.post("/refresh", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(400).json({ error: "Refresh token is required" });
+    return res.status(400).json({ message: "Refresh token is required" });
   }
 
   try {
@@ -99,14 +99,14 @@ router.post("/refresh", async (req, res) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      return res.status(response.status).json({ error: errorData.error });
+      return res.status(response.status).json({ message: errorData.error });
     }
 
     const tokens = await response.json();
     return res.status(200).json(tokens);
   } catch (error) {
     console.error("Error refreshing token:", error);
-    return res.status(500).json({ error: "Failed to refresh token" });
+    return res.status(500).json({ message: "Failed to refresh token" });
   }
 });
 
