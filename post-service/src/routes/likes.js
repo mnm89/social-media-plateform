@@ -3,7 +3,7 @@ const { Like } = require("../models");
 
 const router = express.Router();
 
-router.post("/:postId", keycloak.protect(), async (req, res) => {
+router.post("/:postId", async (req, res) => {
   const { postId } = req.params;
   const userId = req.kauth.grant.access_token.content.sub;
 
@@ -22,7 +22,7 @@ router.post("/:postId", keycloak.protect(), async (req, res) => {
   }
 });
 
-router.delete("/:postId", keycloak.protect(), async (req, res) => {
+router.delete("/:postId", async (req, res) => {
   const { postId } = req.params;
   const userId = req.kauth.grant.access_token.content.sub;
 
