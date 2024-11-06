@@ -34,3 +34,54 @@
     - Public posts: Actions enabled for all logged-in users.
     - Private posts: Actions enabled for all logged-in users.
     - Friends-only posts: Actions enabled if the user is friends with the post author.
+
+### Models
+
+1. **Comment**:
+   - `id`: Unique identifier for the comment
+   - `postId`: ID of the post to which the comment belongs
+   - `userId`: ID of the user who made the comment
+   - `content`: Text content of the comment
+   - `parentId`: ID of the parent comment, if it’s a reply (otherwise null)
+   - `createdAt` and `updatedAt`: Timestamps for comment creation and update
+
+2. **Like**:
+   - `id`: Unique identifier for the like
+   - `postId`: ID of the post that received the like
+   - `userId`: ID of the user who liked the post
+   - `createdAt`: Timestamp for when the like was created
+
+### API Endpoints
+
+#### Comments
+
+1. **Add Comment to Post**
+   - **POST** `/posts/:postId/comments`
+   - Request Body: `{ "content": "Comment text", "parentId": null }`
+   - Only authenticated users can add comments.
+
+2. **Get Comments for Post**
+   - **GET** `/posts/:postId/comments`
+   - Response: A list of comments with nested replies.
+
+3. **Edit Comment**
+   - **PUT** `/comments/:commentId`
+   - Allows the comment’s author to update the content.
+
+4. **Delete Comment**
+   - **DELETE** `/comments/:commentId`
+   - Allows the comment’s author to delete it.
+
+#### Likes
+
+1. **Add Like to Post**
+   - **POST** `/posts/:postId/like`
+   - Adds a like from the authenticated user.
+
+2. **Remove Like from Post**
+   - **DELETE** `/posts/:postId/like`
+   - Removes the like from the authenticated user.
+
+3. **Get Like Count for Post**
+   - **GET** `/posts/:postId/likes`
+   - Returns the count of likes for a post.
