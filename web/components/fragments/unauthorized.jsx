@@ -1,10 +1,11 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { usePathname, redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 export const UnauthorizedCard = () => {
+  const path = usePathname();
   return (
     <Card className="p-6 shadow-lg text-center">
       <h2 className="text-2xl font-semibold text-gray-800">Unauthorized</h2>
@@ -13,7 +14,7 @@ export const UnauthorizedCard = () => {
       </p>
       <Button
         variant="primary"
-        onClick={() => redirect("/login")}
+        onClick={() => redirect("/login?redirectTo=" + path)}
         className="mt-4"
       >
         Go to Login

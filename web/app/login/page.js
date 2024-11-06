@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e) => {
@@ -26,7 +27,11 @@ export default function LoginPage() {
     startTransition(async () => {
       try {
         await loginAction(username, password);
-        router.push("/account-settings"); // Redirect after successful login
+        router.push(
+          searchParams.has("redirectTo")
+            ? searchParams.get("redirectTo")
+            : "/account-settings"
+        ); // Redirect after successful login
       } catch (err) {
         setError(err.message);
       }
