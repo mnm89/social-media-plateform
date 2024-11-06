@@ -3,6 +3,7 @@ const express = require("express");
 const session = require("./config/session");
 const keycloak = require("./config/keycloak");
 const postRoutes = require("./routes/posts");
+const commentRoutes = require("./routes/comments");
 const publicRoutes = require("./routes/public");
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(keycloak.middleware());
 app.use(express.json());
 
 app.use("/posts", postRoutes);
+app.use("/posts/:postId/comments", commentRoutes);
 app.use("/public", publicRoutes);
 
 // Starting the server

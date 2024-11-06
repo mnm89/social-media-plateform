@@ -1,35 +1,39 @@
-const { Post } = require(".");
-module.exports = (sequelize, DataTypes) => {
-  const Comment = sequelize.define(
-    "Comment",
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
+const { Model, DataTypes } = require("sequelize");
+
+class Comment extends Model {
+  static initModel(sequelize) {
+    Comment.init(
+      {
+        id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+        },
+        userId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        postId: {
+          type: DataTypes.UUID,
+          allowNull: false,
+        },
+        parentId: {
+          type: DataTypes.UUID,
+          allowNull: true,
+        },
       },
-      postId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-      userId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      parentId: {
-        type: DataTypes.UUID, // This references another comment for replies
-        allowNull: true,
-      },
-    },
-    {
-      tableName: "comments",
-      timestamps: true,
-    }
-  );
-  Comment.belongsTo(Post, { foreignKey: "postId" });
-  return Comment;
-};
+      {
+        sequelize,
+        modelName: "Comment",
+        tableName: "comments",
+        timestamps: true,
+      }
+    );
+  }
+}
+
+module.exports = Comment;
