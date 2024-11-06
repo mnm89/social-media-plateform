@@ -17,11 +17,11 @@ app.use(express.json());
 // Use the auth routes
 app.use("/auth", authRoutes);
 // Use the profile routes
-app.use("/profiles", profileRoutes);
+app.use("/profile", profileRoutes);
 // Use the friends routes
 app.use("/users", userRoutes);
 // Use the friends routes
-app.use("/friendships", friendshipRoutes);
+app.use("/friendship", friendshipRoutes);
 
 // Starting the server
 const PORT = process.env.PORT || 3000;
