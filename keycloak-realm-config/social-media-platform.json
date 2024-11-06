@@ -11,7 +11,7 @@
             "serviceAccountsEnabled": false,
             "protocol": "openid-connect",
             "directAccessGrantsEnabled": true,
-            "fullScopeAllowed": false,
+            "fullScopeAllowed": true,
             "redirectUris": [
                 "/*"
             ],
