@@ -63,6 +63,7 @@ router.get("/", async (req, res) => {
 
 // Get a single post by ID
 router.get("/:id", async (req, res) => {
+  const userId = req.kauth.grant.access_token.content.sub;
   try {
     const post = await Post.findByPk(req.params.id);
     if (!post) return res.status(404).json({ error: "Post not found" });
