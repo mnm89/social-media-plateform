@@ -6,6 +6,7 @@ const authRoutes = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
 const userRoutes = require("./routes/user");
 const friendshipRoutes = require("./routes/friendship");
+const { bootstrapUsersProfile } = require("./config/profile");
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use("/friendships", friendshipRoutes);
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  bootstrapUsersProfile();
   console.log(`User service running on port ${PORT}`);
 });
