@@ -2,26 +2,10 @@ const { getAccessToken } = require("../helpers/accessToken");
 
 const attributes = [
   {
-    name: "email",
+    name: "username",
+    displayName: "${username}",
     required: {
       roles: ["user"],
-    },
-    permissions: {
-      view: ["user"],
-      edit: ["user"],
-    },
-    validations: {
-      email: {},
-      length: {
-        max: 255,
-      },
-    },
-  },
-  {
-    name: "username",
-    permissions: {
-      view: ["user"],
-      edit: ["user"],
     },
     validations: {
       length: {
@@ -31,9 +15,72 @@ const attributes = [
       "username-prohibited-characters": {},
       "up-username-not-idn-homograph": {},
     },
+    permissions: {
+      view: ["admin", "user"],
+      edit: ["admin", "user"],
+    },
+    multivalued: false,
+  },
+  {
+    name: "email",
+    displayName: "${email}",
+    validations: {
+      email: {},
+      length: {
+        max: 255,
+      },
+    },
+    required: {
+      roles: ["user"],
+    },
+    permissions: {
+      view: ["admin", "user"],
+      edit: ["admin", "user"],
+    },
+    multivalued: false,
+  },
+  {
+    name: "firstName",
+    displayName: "${firstName}",
+    validations: {
+      length: {
+        max: 255,
+      },
+      "person-name-prohibited-characters": {},
+    },
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: "lastName",
+    displayName: "${lastName}",
+    validations: {
+      length: {
+        max: 255,
+      },
+      "person-name-prohibited-characters": {},
+    },
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
   },
 ];
-const groups = [];
+const groups = [
+  {
+    name: "user-metadata",
+    displayHeader: "User metadata",
+    displayDescription: "Attributes, which refer to user metadata",
+  },
+];
 async function bootstrapUsersProfile() {
   const token = await getAccessToken();
 
