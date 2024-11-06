@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     res.status(201).json(post);
   } catch (error) {
     console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
+    res.status(500).json({ message: "Failed to create post" });
   }
 });
 
@@ -57,7 +57,7 @@ router.get("/", async (req, res) => {
     res.json(enrichedPosts);
   } catch (error) {
     console.error("Error retrieving posts:", error);
-    res.status(500).json({ error: "Failed to retrieve posts" });
+    res.status(500).json({ message: "Failed to retrieve posts" });
   }
 });
 
@@ -66,7 +66,7 @@ router.get("/:id", async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
   try {
     const post = await Post.findByPk(req.params.id);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) return res.status(404).json({ message: "Post not found" });
 
     if (
       post.visibility === "public" ||
@@ -80,10 +80,10 @@ router.get("/:id", async (req, res) => {
       return res.json({ ...post.dataValues, user, authorName });
     }
 
-    res.status(403).json({ error: "Unauthorized" });
+    res.status(403).json({ message: "Unauthorized" });
   } catch (error) {
     console.error("Error retrieving post:", error);
-    res.status(500).json({ error: "Failed to retrieve post" });
+    res.status(500).json({ message: "Failed to retrieve post" });
   }
 });
 
@@ -96,7 +96,7 @@ router.put("/:id", checkOwnership, async (req, res) => {
     res.json(req.post);
   } catch (error) {
     console.error("Error updating post:", error);
-    res.status(500).json({ error: "Failed to update post" });
+    res.status(500).json({ message: "Failed to update post" });
   }
 });
 
@@ -107,7 +107,7 @@ router.delete("/:id", checkOwnership, async (req, res) => {
     res.status(204).send(); // No content response
   } catch (error) {
     console.error("Error deleting post:", error);
-    res.status(500).json({ error: "Failed to delete post" });
+    res.status(500).json({ message: "Failed to delete post" });
   }
 });
 

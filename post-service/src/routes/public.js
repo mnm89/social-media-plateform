@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
     res.json(enrichedPosts);
   } catch (error) {
     console.error("Error retrieving posts:", error);
-    res.status(500).json({ error: "Failed to retrieve posts" });
+    res.status(500).json({ message: "Failed to retrieve posts" });
   }
 });
 module.exports = router;
