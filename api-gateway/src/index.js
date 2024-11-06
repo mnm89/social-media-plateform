@@ -73,7 +73,7 @@ app.post(
 app.get(
   "/public",
   createProxyMiddleware({
-    target: `${process.env.POST_SERVICE_URL}`,
+    target: `${process.env.POST_SERVICE_URL}/public`,
     changeOrigin: true,
   })
 );
@@ -85,7 +85,7 @@ app.use(
     return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
   createProxyMiddleware({
-    target: `${process.env.USER_SERVICE_URL}`, // URL of the user service
+    target: `${process.env.USER_SERVICE_URL}/users`, // URL of the user service
     changeOrigin: true,
   })
 );
@@ -97,7 +97,7 @@ app.use(
     return token.hasRole("realm:user") || token.hasRole("realm:admin");
   }),
   createProxyMiddleware({
-    target: `${process.env.POST_SERVICE_URL}`, // URL of the post service
+    target: `${process.env.POST_SERVICE_URL}/posts`, // URL of the post service
     changeOrigin: true,
   })
 );
