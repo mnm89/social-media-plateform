@@ -2,9 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("./config/session");
 const keycloak = require("./config/keycloak");
-const postRoutes = require("./routes/posts");
-const commentRoutes = require("./routes/comments");
-const publicRoutes = require("./routes/public");
+const routes = require("./routes");
 
 const app = express();
 
@@ -12,9 +10,7 @@ app.use(session.middleware());
 app.use(keycloak.middleware());
 app.use(express.json());
 
-app.use("/posts", postRoutes);
-app.use("/posts/:postId/comments", commentRoutes);
-app.use("/public", publicRoutes);
+app.use("/", routes);
 
 // Starting the server
 const PORT = process.env.PORT || 3000;

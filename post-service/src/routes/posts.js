@@ -1,6 +1,6 @@
 const express = require("express");
-const keycloak = require("../config/keycloak"); // Assuming Keycloak config is here
-const { Post } = require("../models"); // Import the Post model
+const keycloak = require("../config/keycloak");
+const { Post, Comment, Like } = require("../models"); // Import the Post model
 const checkOwnership = require("../middleware/checkOwnership");
 const { getUserDetails, getUserAuthorName } = require("../helpers/postUser");
 const { isFriend } = require("../helpers/checkFriendship");
@@ -65,7 +65,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
   try {
-    const post = await Post.findByPk(req.params.id);
+    const post = await Post.findByPk(req.params.id, {
+      include: [
+        { model: Comment, as: "comments" },
+        { model: Like, as: "likes" },
+      ],
+    });
     if (!post) return res.status(404).json({ message: "Post not found" });
 
     if (
