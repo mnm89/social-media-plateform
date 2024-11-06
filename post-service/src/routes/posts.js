@@ -2,6 +2,8 @@ const express = require("express");
 const keycloak = require("../config/keycloak"); // Assuming Keycloak config is here
 const { Post } = require("../models"); // Import the Post model
 const checkOwnership = require("../middleware/checkOwnership");
+const { getUserDetails, getUserAuthorName } = require("../helpers/postUser");
+const { isFriend } = require("../helpers/checkFriendship");
 
 const router = express.Router();
 router.use(keycloak.protect("realm:user"));
@@ -28,6 +30,7 @@ router.get("/", async (req, res) => {
       posts.map(async (post) => {
         if (post.visibility === "public") return post;
         if (post.visibility === "private") return post; // Show to any authenticated user
+        if (post.userId === userId) return post;
         if (
           post.visibility === "friends-only" &&
           (await isFriend(post.userId, userId))
@@ -37,7 +40,21 @@ router.get("/", async (req, res) => {
       })
     );
 
-    res.json(visiblePosts.filter(Boolean)); // Filter out null posts
+    const cleanPosts = visiblePosts.filter(Boolean); // Filter out null posts
+
+    // Get unique user IDs from posts
+    const userIds = [...new Set(cleanPosts.map((post) => post.userId))];
+
+    // Fetch and cache author names
+    const names = await Promise.all(userIds.map(getUserAuthorName));
+
+    // Enrich posts with author names
+    const enrichedPosts = cleanPosts.map((post) => ({
+      ...post.dataValues,
+      authorName: names[userIds.indexOf(post.userId)] || "Anonymous",
+    }));
+
+    res.json(enrichedPosts);
   } catch (error) {
     console.error("Error retrieving posts:", error);
     res.status(500).json({ error: "Failed to retrieve posts" });
@@ -57,7 +74,9 @@ router.get("/:id", async (req, res) => {
       (post.visibility === "friends-only" &&
         (await isFriend(post.userId, userId)))
     ) {
-      return res.json(post);
+      const user = await getUserDetails(post.userId);
+      const authorName = await getUserAuthorName(post.userId);
+      return res.json({ ...post.dataValues, user, authorName });
     }
 
     res.status(403).json({ error: "Unauthorized" });
