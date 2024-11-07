@@ -3,8 +3,6 @@
     "enabled": true,
     "registrationAllowed": true,
     "resetPasswordAllowed": true,
-    "accessTokenLifespan": "7200",
-    "accessTokenLifespanForImplicitFlow": "7200",
     "clients": [
         {
             "clientId": "web-client",
@@ -20,7 +18,14 @@
             ],
             "webOrigins": [
                 "/*"
-            ]
+            ],
+            "attributes": {
+                "access.token.lifespan": "3600",
+                "client.session.idle.timeout": "86400",
+                "client.session.max.lifespan": "86400",
+                "client.offline.session.idle.timeout": "2592000",
+                "client.offline.session.max.lifespan": "2592000"
+            }
         },
         {
             "clientId": "user-management-service",
