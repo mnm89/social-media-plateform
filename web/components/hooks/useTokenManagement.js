@@ -1,71 +1,60 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 import { isTokenExpired } from "@/lib/token";
-import { refreshToken } from "@/actions/auth";
+import { refreshToken as refreshTokenAction } from "@/actions/auth";
 
 const useTokenManagement = () => {
-  const [isActive, setIsActive] = useState(true);
-  const router = useRouter();
+  const [accessToken, setAccessToken] = useState(() =>
+    Cookies.get("access_token")
+  );
+  const [refreshToken, setRefreshToken] = useState(() =>
+    Cookies.get("refresh_token")
+  );
   const [isPending, startTransition] = useTransition();
 
+  const isAuthenticated = () => !!accessToken && !isTokenExpired(accessToken);
+
+  const setTokens = useCallback((tokens) => {
+    const { access_token, refresh_token } = tokens;
+    setAccessToken(access_token);
+    setRefreshToken(refresh_token);
+    Cookies.set("access_token", access_token);
+    Cookies.set("refresh_token", refresh_token);
+  }, []);
+
+  const clearTokens = () => {
+    setAccessToken(null);
+    setRefreshToken(null);
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+  };
+
+  const refreshAccessToken = useCallback(
+    () =>
+      startTransition(async () => {
+        try {
+          setTokens(await refreshTokenAction(refreshToken));
+        } catch (error) {
+          console.error("Failed to refresh access token:", error);
+          clearTokens();
+        }
+      }),
+    [refreshToken, setTokens]
+  );
+
   useEffect(() => {
-    let lastActivityTime = Date.now();
-    let refreshInterval;
-
-    const refreshTokens = async () => {
-      if (isTokenExpired(Cookies.get("access_token"))) {
-        startTransition(async () => {
-          try {
-            const { access_token, refresh_token } = await refreshToken();
-            Cookies.set("access_token", access_token);
-            Cookies.set("refresh_token", refresh_token);
-          } catch (err) {
-            router.push("/login");
-          }
-        });
+    // Auto-refresh logic
+    const intervalId = setInterval(async () => {
+      if (refreshToken && accessToken) {
+        await refreshAccessToken();
       }
-    };
+    }, 15 * 60 * 1000); // Refresh every 15 minutes (example)
 
-    const resetActivity = () => {
-      lastActivityTime = Date.now();
-    };
+    return () => clearInterval(intervalId);
+  }, [refreshToken, accessToken, refreshAccessToken]);
 
-    const checkInactivity = () => {
-      const inactivityLimit = 5 * 60 * 1000; // 5 minutes
-      if (Date.now() - lastActivityTime > inactivityLimit) {
-        setIsActive(false);
-        router.push("/login"); // Redirect to login if inactive
-      }
-    };
-
-    const startRefreshInterval = () => {
-      refreshInterval = setInterval(() => {
-        refreshTokens();
-      }, 1000 * 60); // Refresh every minute
-    };
-
-    window.addEventListener("mousemove", resetActivity);
-    window.addEventListener("keydown", resetActivity);
-    window.addEventListener("focus", startRefreshInterval);
-    window.addEventListener("blur", () => clearInterval(refreshInterval));
-
-    startRefreshInterval();
-
-    const inactivityCheck = setInterval(checkInactivity, 1000 * 60);
-
-    return () => {
-      clearInterval(refreshInterval);
-      clearInterval(inactivityCheck);
-      window.removeEventListener("mousemove", resetActivity);
-      window.removeEventListener("keydown", resetActivity);
-      window.removeEventListener("focus", startRefreshInterval);
-      window.removeEventListener("blur", () => clearInterval(refreshInterval));
-    };
-  }, [router]);
-
-  return { isActive, isPending };
+  return { isAuthenticated, isPending, clearTokens, accessToken, refreshToken };
 };
 
 export default useTokenManagement;

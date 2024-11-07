@@ -1,10 +1,11 @@
 async function handleNonOkResponse(response) {
   const error = new Error();
   error.name = response.statusText;
-  const isJson = response.headers.get("content-type") === "application/json";
-  error.message = isJson
-    ? (await response.json()).message
-    : await response.text();
+  try {
+    error.message = (await response.json()).message;
+  } catch (e) {
+    error.message = await response.text();
+  }
   return error;
 }
 async function getPublicContent() {

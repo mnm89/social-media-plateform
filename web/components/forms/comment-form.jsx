@@ -4,10 +4,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
 import { addComment } from "@/actions/post";
+import { useRouter } from "next/navigation";
 
 export const CommentForm = ({ postId }) => {
   const [commentText, setCommentText] = useState("");
 
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   async function handleAddComment() {
@@ -15,9 +17,9 @@ export const CommentForm = ({ postId }) => {
 
     startTransition(async () => {
       try {
-        const comment = await addComment(postId, commentText);
-        console.log({ comment });
+        await addComment(postId, commentText);
         setCommentText("");
+        router.refresh();
       } catch (err) {
         console.error("Error adding comment:", err);
         // toast error
@@ -37,7 +39,7 @@ export const CommentForm = ({ postId }) => {
         />
         <Button
           onClick={handleAddComment}
-          className="mt-2 w-full bg-blue-500 text-white"
+          className="mt-2 w-full"
           disabled={isPending}
         >
           {isPending ? "Posting comment ..." : "Post Comment"}

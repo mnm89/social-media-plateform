@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,7 +18,6 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
@@ -33,11 +32,9 @@ export default function LoginPage() {
         );
         Cookies.set("access_token", access_token);
         Cookies.set("refresh_token", refresh_token);
-        router.push(
-          searchParams.has("redirectTo")
-            ? searchParams.get("redirectTo")
-            : "/account-settings"
-        ); // Redirect after successful login
+        window.location.href = searchParams.has("redirectTo")
+          ? searchParams.get("redirectTo")
+          : "/account-settings";
       } catch (err) {
         setError(err.message);
       }
@@ -62,6 +59,7 @@ export default function LoginPage() {
               <Input
                 id="username"
                 type="text"
+                autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
@@ -73,6 +71,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"

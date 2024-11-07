@@ -1,7 +1,7 @@
 "use client";
 
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { parseToken, isTokenExpired } from "@/lib/token";
-import useTokenManagement from "@/components/hooks/useTokenManagement";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  useTokenManagement();
-  const isAuthenticated = !isTokenExpired(Cookies.get("access_token"));
-  const userName = parseToken(Cookies.get("access_token")).preferred_username;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState("");
+  useEffect(() => {
+    setIsAuthenticated(!isTokenExpired(Cookies.get("access_token")));
+    setUserName(parseToken(Cookies.get("access_token")).preferred_username);
+  }, []);
 
   const handleLogout = async () => {
     Cookies.remove("access_token");

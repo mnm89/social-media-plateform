@@ -1,9 +1,9 @@
 "use client"; // Error boundaries must be Client Components
 
 import { useEffect } from "react";
-import { UnauthorizedCard } from "@/components/fragments/unauthorized";
+import { UnauthorizedCard } from "@/components/unauthorized";
 
-import { ErrorCard } from "@/components/fragments/error";
+import { ErrorCard } from "@/components/error";
 
 export default function Error({ error, reset }) {
   useEffect(() => {

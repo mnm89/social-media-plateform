@@ -1,23 +1,22 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { isTokenExpired } from "@/lib/token";
+import { isPublicPath } from "@/lib/url";
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
-  // Exclude static files, images, favicon, unauthenticated routes, and the home page
-  const isUnauthenticatedPath = ["/login", "/register", "/"].includes(pathname);
-  if (isUnauthenticatedPath) {
+  if (isPublicPath(pathname)) {
     return NextResponse.next(); // Allow access without authentication
   }
   // Define paths to exclude from authentication check
   const token = await (await cookies()).get("access_token")?.value;
 
   if (token && isTokenExpired(token)) {
-    console.error("Middleware token expiry detected");
-    const loginUrl = req.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    return NextResponse.redirect(loginUrl);
+    console.error("Middleware token expiry detected", { pathname });
+    // const loginUrl = req.nextUrl.clone();
+    // loginUrl.pathname = "/login?redirectTo=" + pathname;
+    // return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

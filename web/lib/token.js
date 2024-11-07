@@ -1,7 +1,8 @@
 export function isTokenExpired(token) {
   if (!token) return true;
   const payload = parseToken(token);
-  return payload.exp * 1000 < Date.now();
+  const isExpired = payload.exp * 1000 < Date.now();
+  return isExpired;
 }
 
 export function parseToken(token) {

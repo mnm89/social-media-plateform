@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPosts, getPublicContent } from "@/lib/api";
+import { isTokenExpired } from "@/lib/token";
 import Link from "next/link";
 import MarkdownIt from "markdown-it";
 
@@ -39,7 +40,9 @@ const PostCard = ({ post }) => {
 
 export default async function Home() {
   const token = (await cookies()).get("access_token")?.value;
-  const posts = token ? await getPosts(token) : await getPublicContent();
+  const posts = !isTokenExpired(token)
+    ? await getPosts(token)
+    : await getPublicContent();
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Latest Posts ({posts.length})</h1>

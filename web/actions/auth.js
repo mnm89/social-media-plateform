@@ -2,8 +2,11 @@
 import { cookies } from "next/headers";
 import { handleNonOkResponse } from "@/lib/api";
 
-export async function refreshToken() {
-  const refreshToken = (await cookies()).get("refresh_token")?.value;
+export async function refreshToken(refreshToken = "") {
+  if (!refreshToken) {
+    // try to get token from headers of not provided
+    refreshToken = (await cookies()).get("refresh_token")?.value;
+  }
 
   if (!refreshToken) {
     throw new Error("No refresh token found");
