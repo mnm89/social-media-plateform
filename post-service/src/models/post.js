@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const { getAuthorName, getAuthorAvatar } = require("../helpers/userData");
+const Comment = require("./comment");
 
 class Post extends Model {
   static initModel(sequelize) {
@@ -49,6 +50,14 @@ class Post extends Model {
           // Set author fields on the comment instance
           post.setDataValue("authorName", await getAuthorName(post.userId));
           post.setDataValue("authorAvatar", await getAuthorAvatar(post.userId));
+          if (post.comments && post.comments.length > 0) {
+            // Manually trigger the afterFind hook for each comment
+            await Promise.all(
+              post.comments.map(async (comment) => {
+                await Comment.runHooks("afterFind", comment);
+              })
+            );
+          }
         })
       );
     });

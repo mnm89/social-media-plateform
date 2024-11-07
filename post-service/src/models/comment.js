@@ -53,6 +53,14 @@ class Comment extends Model {
             "authorAvatar",
             await getAuthorAvatar(comment.userId)
           );
+
+          if (comment.replies && comment.replies.length > 0) {
+            await Promise.all(
+              comment.replies.map(async (reply) => {
+                await Comment.runHooks("afterFind", reply);
+              })
+            );
+          }
         })
       );
     });

@@ -36,7 +36,7 @@ router.delete("/:postId", async (req, res) => {
     await like.destroy();
     res.status(204).send();
   } catch (error) {
-    console.error("Error unliking post:", error);
+    console.error("Error unLiking post:", error);
     res.status(500).json({ error: "Failed to unlike post" });
   }
 });
