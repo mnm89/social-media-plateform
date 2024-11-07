@@ -1,4 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
+const { getAuthorName, getAuthorAvatar } = require("../helpers/userData");
 
 class Comment extends Model {
   static initModel(sequelize) {
@@ -33,6 +34,28 @@ class Comment extends Model {
         timestamps: true,
       }
     );
+    // Add afterFind hook to enrich comments with author data
+    Comment.addHook("afterFind", async (comments) => {
+      if (!comments) return;
+
+      // Ensure we're working with an array
+      const commentsArray = Array.isArray(comments) ? comments : [comments];
+
+      // Fetch and bind author data for each comment
+      await Promise.all(
+        commentsArray.map(async (comment) => {
+          // Set author fields on the comment instance
+          comment.setDataValue(
+            "authorName",
+            await getAuthorName(comment.userId)
+          );
+          comment.setDataValue(
+            "authorAvatar",
+            await getAuthorAvatar(comment.userId)
+          );
+        })
+      );
+    });
   }
 }
 

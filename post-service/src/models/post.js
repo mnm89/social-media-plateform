@@ -35,6 +35,22 @@ class Post extends Model {
         timestamps: true,
       }
     );
+    // Add afterFind hook to enrich comments with author data
+    Post.addHook("afterFind", async (posts) => {
+      if (!posts) return;
+
+      // Ensure we're working with an array
+      const postsArray = Array.isArray(posts) ? posts : [posts];
+
+      // Fetch and bind author data for each comment
+      await Promise.all(
+        postsArray.map(async (post) => {
+          // Set author fields on the comment instance
+          post.setDataValue("authorName", await getAuthorName(post.userId));
+          post.setDataValue("authorAvatar", await getAuthorAvatar(post.userId));
+        })
+      );
+    });
   }
 }
 

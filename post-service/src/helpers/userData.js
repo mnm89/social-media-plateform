@@ -1,12 +1,16 @@
 const NodeCache = require("node-cache");
 const { getAccessToken } = require("./accessToken");
 const userCache = new NodeCache({ stdTTL: 300, checkperiod: 320 }); // Cache for 5 minutes
-async function getUserAuthorName(userId) {
-  const { username } = await getUserDetails(userId);
+async function getAuthorName(userId) {
+  const { username } = await getUserData(userId);
   return username;
 }
+async function getAuthorAvatar(userId) {
+  const { avatar } = await getUserData(userId);
+  return avatar;
+}
 
-async function getUserDetails(userId) {
+async function getUserData(userId) {
   let user = userCache.get(userId);
   if (!user) {
     const token = await getAccessToken();
@@ -27,4 +31,4 @@ async function getUserDetails(userId) {
   return user;
 }
 
-module.exports = { getUserAuthorName, getUserDetails };
+module.exports = { getAuthorName, getUserData, getAuthorAvatar };
