@@ -2,6 +2,9 @@
     "realm": "social-media-platform",
     "enabled": true,
     "registrationAllowed": true,
+    "resetPasswordAllowed": true,
+    "accessTokenLifespan": "7200",
+    "accessTokenLifespanForImplicitFlow": "7200",
     "clients": [
         {
             "clientId": "web-client",
