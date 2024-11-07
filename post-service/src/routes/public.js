@@ -1,6 +1,5 @@
 const express = require("express");
 const { Post } = require("../models"); // Import the Post model
-const { getUserAuthorName } = require("../helpers/postUser");
 const router = express.Router();
 
 router.get("/", async (req, res) => {

@@ -1,7 +1,6 @@
 const express = require("express");
 const { Post, Comment, Like } = require("../models"); // Import the Post model
 const checkOwnership = require("../middleware/checkOwnership");
-const { getUserDetails, getUserAuthorName } = require("../helpers/userData");
 const { isFriend } = require("../helpers/checkFriendship");
 
 const router = express.Router();
@@ -50,29 +49,40 @@ router.get("/", async (req, res) => {
 // Get a single post by ID
 router.get("/:id", async (req, res) => {
   try {
-    const isFriend = await isFriend(
-      post.userId,
-      req.kauth.grant.access_token.content.sub
-    );
-    const isAuthor = post.userId === req.kauth.grant.access_token.content.sub;
     const post = await Post.findByPk(req.params.id, {
       include: [
         {
           model: Comment,
           as: "comments",
           where: { parentId: null }, // Only main comments
+          required: false, // Ensures LEFT OUTER JOIN instead of INNER JOIN
           include: [
-            { model: Comment, as: "replies", order: [["createdAt", "ASC"]] }, // Include replies here
+            {
+              model: Comment,
+              as: "replies",
+              required: false, // Ensures LEFT OUTER JOIN for replies
+              order: [["createdAt", "ASC"]],
+            }, // Include replies here
           ],
         },
-        { model: Like, as: "likes" },
+        {
+          model: Like,
+          as: "likes",
+          required: false, // Ensures LEFT OUTER JOIN for replies
+        },
       ],
     });
     if (!post) return res.status(404).json({ message: "Post not found" });
 
+    const isFriends = await isFriend(
+      post.userId,
+      req.kauth.grant.access_token.content.sub
+    );
+    const isAuthor = post.userId === req.kauth.grant.access_token.content.sub;
+
     if (
       ["public", "private"].includes(post.visibility) ||
-      (post.visibility === "friends-only" && isFriend) ||
+      (post.visibility === "friends-only" && isFriends) ||
       isAuthor
     ) {
       return res.json(post);

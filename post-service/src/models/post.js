@@ -1,4 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
+const { getAuthorName, getAuthorAvatar } = require("../helpers/userData");
 
 class Post extends Model {
   static initModel(sequelize) {
