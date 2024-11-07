@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { registerAction } from "@/actions/register";
+import { registerAction } from "@/actions/auth";
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");

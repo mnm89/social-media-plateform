@@ -39,4 +39,5 @@ module.exports = {
   getPublicContent,
   getPosts,
   getPost,
+  handleNonOkResponse,
 };

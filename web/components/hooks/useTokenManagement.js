@@ -3,7 +3,7 @@ import { useEffect, useState, useTransition } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { isTokenExpired } from "@/lib/token";
-import { refreshToken } from "@/actions/refresh";
+import { refreshToken } from "@/actions/auth";
 
 const useTokenManagement = () => {
   const [isActive, setIsActive] = useState(true);

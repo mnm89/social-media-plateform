@@ -8,8 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { CommentForm } from "@/components/comment-form";
 import { ThumbsUp } from "lucide-react";
 import { parseToken } from "@/lib/token";
 import MarkdownIt from "markdown-it";
@@ -26,12 +25,20 @@ export default async function Page({ params }) {
     );
   }
   const { sub } = parseToken(token);
-  const { authorName, userId, createdAt, title, content, authorAvatar } =
-    await getPost(token, id);
+  const post = await getPost(token, id);
+  console.log(post);
+  const {
+    authorName,
+    userId,
+    createdAt,
+    title,
+    content,
+    authorAvatar,
+    comments,
+  } = post;
   const md = new MarkdownIt();
   const htmlContent = md.render(content);
   const likesCount = 5;
-  const comments = [];
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -86,15 +93,33 @@ export default async function Page({ params }) {
         {comments.map((comment) => (
           <Card key={comment.id} className="p-4 shadow-sm rounded-md border">
             <div className="flex items-start space-x-4">
-              <Avatar
-                src={comment.author.avatar}
-                alt={comment.author.name}
-                size="sm"
-              />
+              <Avatar>
+                <AvatarImage
+                  src={comment.authorAvatar}
+                  alt={comment.authorName}
+                />
+                <AvatarFallback>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="12" cy="8" r="4" fill="#fff" />
+                    <path
+                      d="M4 20c0-3.5 4-5.5 8-5.5s8 2 8 5.5"
+                      stroke="#fff"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                </AvatarFallback>
+              </Avatar>
+
               <div className="flex-1">
                 <div className="flex justify-between">
                   <h4 className="text-sm font-semibold">
-                    {comment.author.name}
+                    {comment.authorName}
                   </h4>
                   <span className="text-xs text-gray-400">
                     {new Date(comment.createdAt).toLocaleDateString()}
@@ -114,20 +139,7 @@ export default async function Page({ params }) {
         ))}
       </div>
 
-      {sub !== userId && (
-        <Card className="p-4 shadow-md rounded-md">
-          <CardContent>
-            <h4 className="text-md font-medium mb-2">Add a Comment</h4>
-            <Textarea placeholder="Write your comment..." rows="4" />
-            <Button
-              /*  onClick={handleAddComment} */
-              className="mt-2 w-full bg-blue-500 text-white"
-            >
-              Post Comment
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {sub !== userId && <CommentForm postId={id} />}
     </div>
   );
 }

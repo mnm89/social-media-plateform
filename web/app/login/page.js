@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import Cookies from "js-cookie";
 import { Label } from "@/components/ui/label";
-import { loginAction } from "@/actions/login";
+import { loginAction } from "@/actions/auth";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
