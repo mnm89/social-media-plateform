@@ -10,7 +10,11 @@ export const ErrorCard = ({ message, reset }) => {
       <h2 className="text-2xl font-semibold text-gray-800">
         Something went wrong!
       </h2>
-      <p className="text-gray-600 mt-2">{message}</p>
+      {message.includes("<!DOCTYPE html>") ? (
+        <div dangerouslySetInnerHTML={{ __html: message }}></div>
+      ) : (
+        <p className="text-gray-600 mt-2">{message}</p>
+      )}
       <p className="text-gray-600 mt-2">Please try again or reload the page</p>
       <div className="flex justify-between">
         <Button variant="primary" onClick={() => reset()} className="mt-4">
