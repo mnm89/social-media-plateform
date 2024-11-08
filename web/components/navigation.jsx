@@ -50,6 +50,11 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white text-gray-800">
                 <DropdownMenuItem asChild>
+                  <Link href="/friends" className="w-full text-left">
+                    Friends
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/account-settings" className="w-full text-left">
                     Account Settings
                   </Link>

@@ -36,9 +36,21 @@ async function getPost(token, id) {
   throw await handleNonOkResponse(response);
 }
 
+async function getFriends(token) {
+  const response = await fetch(`${process.env.API_GATEWAY_URL}/friendships`, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  if (response.ok) return response.json();
+  throw await handleNonOkResponse(response);
+}
+
 module.exports = {
   getPublicContent,
   getPosts,
   getPost,
   handleNonOkResponse,
+  getFriends,
 };
