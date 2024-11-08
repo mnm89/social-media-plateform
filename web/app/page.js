@@ -19,7 +19,12 @@ const PostCard = ({ post }) => {
     <Card className="mb-6 shadow-lg">
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
-        <p className="text-sm text-gray-500">By {post.authorName}</p>
+        <Link
+          href={"/profiles/" + post.userId}
+          className="text-sm text-gray-500 hover:underline"
+        >
+          By {post.authorName}
+        </Link>
       </CardHeader>
       <CardContent>
         <div

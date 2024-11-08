@@ -14,6 +14,7 @@ import { useAuth } from "@/components/auth-provider";
 import { formatDate } from "@/lib/date";
 import { useRouter } from "next/navigation";
 import { likePost } from "@/actions/post";
+import Link from "next/link";
 
 export default function PostCard({ post }) {
   const { currentUser } = useAuth();
@@ -59,7 +60,13 @@ export default function PostCard({ post }) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-lg font-semibold">{authorName}</h2>
+            <Link
+              href={"/profiles/" + post.userId}
+              className="text-lg font-semibold hover:underline"
+            >
+              {authorName}
+            </Link>
+
             <p className="text-sm text-gray-500">{formatDate(createdAt)}</p>
           </div>
         </div>

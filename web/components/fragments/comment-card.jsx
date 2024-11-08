@@ -5,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { formatDate } from "@/lib/date";
+import Link from "next/link";
 export default function CommentCard({ comment, postId }) {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
 
@@ -34,7 +35,13 @@ export default function CommentCard({ comment, postId }) {
 
           <div className="flex-1">
             <div className="flex justify-between">
-              <h4 className="text-sm font-semibold">{comment.authorName}</h4>
+              <Link
+                href={"/profiles/" + comment.userId}
+                className="text-sm font-semibold hover:underline"
+              >
+                {comment.authorName}
+              </Link>
+
               <span className="text-xs text-gray-400">
                 {formatDate(comment.createdAt)}
               </span>
@@ -75,9 +82,13 @@ export default function CommentCard({ comment, postId }) {
 
                       <div className="flex-1">
                         <div className="flex justify-between">
-                          <h4 className="text-xs font-semibold">
+                          <Link
+                            href={"/profiles/" + reply.userId}
+                            className="text-xs font-semibold hover:underline"
+                          >
                             {reply.authorName}
-                          </h4>
+                          </Link>
+
                           <span className="text-xs text-gray-400">
                             {formatDate(reply.createdAt)}
                           </span>
