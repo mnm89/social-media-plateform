@@ -2,11 +2,11 @@ const NodeCache = require("node-cache");
 const { getAccessToken } = require("./accessToken");
 const userCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 async function getUserName(userId) {
-  const { username } = await getUserData(userId);
+  const { username } = await getKeycloakUser(userId);
   return username;
 }
 async function getUserAvatar(userId) {
-  const { avatar } = await getUserData(userId);
+  const { avatar } = await getKeycloakUser(userId);
   return avatar;
 }
 
@@ -15,7 +15,7 @@ async function getKeycloakUser(userId) {
   if (!user) {
     const token = await getAccessToken();
     const userResponse = await fetch(
-      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${id}`,
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`,
       {
         method: "GET",
         headers: {
