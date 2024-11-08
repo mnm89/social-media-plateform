@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { isTokenExpired } from "@/lib/token";
 import { UnauthorizedCard } from "@/components/unauthorized";
-import PostForm from "@/components/forms/post-form";
 
 export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
@@ -14,9 +13,8 @@ export default async function Page() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-semibold mb-4">Create a New Post</h1>
-      <PostForm />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Profiles </h1>
     </div>
   );
 }

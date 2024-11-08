@@ -22,7 +22,7 @@ export default async function FriendsList() {
         Your Friends
         <br />
         <span className="text-xs font-light">
-          People who can see and react on your friends-only content
+          People who can see and react to your friends-only content
         </span>
       </h1>
       <div className="space-y-2">

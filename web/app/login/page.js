@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import { Label } from "@/components/ui/label";
 import { loginAction } from "@/actions/auth";
 
-export default function LoginPage() {
+export default function Page() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);

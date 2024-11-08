@@ -32,9 +32,20 @@ export default function Navbar() {
     <nav className="bg-gray-800 text-white p-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo/Home Link */}
-        <Link href="/" className="text-lg font-semibold hover:underline">
-          Home
-        </Link>
+        <div className="flex gap-6">
+          <Link href="/" className="text-lg font-semibold hover:underline">
+            Home
+          </Link>
+
+          {isAuthenticated && (
+            <Link
+              href="/posts"
+              className="text-lg font-semibold hover:underline"
+            >
+              Premium
+            </Link>
+          )}
+        </div>
 
         {/* Links for larger screens */}
         <div className="hidden md:flex space-x-4 items-center">

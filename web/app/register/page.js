@@ -12,7 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { registerAction } from "@/actions/auth";
 
-export default function RegisterPage() {
+export default function Page() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/unauthorized";
 
-export default async function ProtectedPage() {
+export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
