@@ -46,13 +46,13 @@ const useTokenManagement = () => {
   useEffect(() => {
     // Auto-refresh logic
     const intervalId = setInterval(async () => {
-      if (refreshToken && accessToken) {
+      if (refreshToken) {
         await refreshAccessToken();
       }
-    }, 15 * 60 * 1000); // Refresh every 15 minutes (example)
+    }, 5 * 60 * 1000); // Refresh every 5 minutes
 
     return () => clearInterval(intervalId);
-  }, [refreshToken, accessToken, refreshAccessToken]);
+  }, [refreshToken, refreshAccessToken]);
 
   return { isAuthenticated, isPending, clearTokens, accessToken, refreshToken };
 };
