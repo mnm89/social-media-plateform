@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { parseToken, isTokenExpired } from "@/lib/token";
+import { PlusCircle } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,10 +38,15 @@ export default function Navbar() {
 
         {/* Links for larger screens */}
         <div className="hidden md:flex space-x-4 items-center">
+          <Button asChild variant="secondary">
+            <Link href="/create-post">
+              <PlusCircle /> Create Post
+            </Link>
+          </Button>
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost">{userName || "User"}</Button>
+                <Button variant="link text-secondary">{userName}</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white text-gray-800">
                 <DropdownMenuItem asChild>

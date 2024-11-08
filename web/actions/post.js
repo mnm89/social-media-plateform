@@ -65,3 +65,26 @@ export async function likePost(postId, isLike = false) {
 
   throw await handleNonOkResponse(response);
 }
+
+export async function createPost(title, content, visibility) {
+  const accessToken = (await cookies()).get("access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+  const response = await fetch(`${process.env.API_GATEWAY_URL}/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + accessToken,
+    },
+    body: JSON.stringify({
+      title,
+      content,
+      visibility,
+    }),
+  });
+  if (response.ok) return response.json();
+
+  throw await handleNonOkResponse(response);
+}
