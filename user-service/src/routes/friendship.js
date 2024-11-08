@@ -5,9 +5,23 @@ const { Op } = require("sequelize");
 
 const router = express.Router();
 
+router.get("/", keycloak.protect("realm:user"), async (req, res) => {
+  const userId = req.kauth.grant.access_token.content.sub;
+  try {
+    const friendships = await Friendship.findAll({
+      where: { [Op.or]: [{ userId }, { friendId: userId }] },
+    });
+    res.json(friendships);
+  } catch (error) {
+    console.error("Error getting user friendships :", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
+
 // Send a friend request
 router.post("/request", keycloak.protect("realm:user"), async (req, res) => {
-  const { userId, friendId } = req.body;
+  const { friendId } = req.body;
+  const userId = req.kauth.grant.access_token.content.sub;
 
   try {
     // Check if a friendship already exists
@@ -27,6 +41,7 @@ router.post("/request", keycloak.protect("realm:user"), async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
+
 router.post("/accept/:id", keycloak.protect("realm:user"), async (req, res) => {
   const { id } = req.params;
 
@@ -40,7 +55,7 @@ router.post("/accept/:id", keycloak.protect("realm:user"), async (req, res) => {
     if (friendRequest.friendId !== userId) {
       return res
         .status(403)
-        .json({ message: "Not authorized to accept this request." });
+        .json({ message: "Not authorized to accept this friendship request." });
     }
 
     // Update the status to accepted
@@ -53,6 +68,7 @@ router.post("/accept/:id", keycloak.protect("realm:user"), async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
+
 router.post("/block/:id", keycloak.protect("realm:user"), async (req, res) => {
   const { id } = req.params;
 
@@ -66,7 +82,7 @@ router.post("/block/:id", keycloak.protect("realm:user"), async (req, res) => {
     if (friendship.friendId !== userId) {
       return res
         .status(403)
-        .json({ message: "Not authorized to block this user." });
+        .json({ message: "Not authorized to block this friendship request." });
     }
 
     friendship.status = "blocked";

@@ -4,10 +4,10 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("friendships", {
       id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.fn("gen_random_uuid"),
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.STRING,
@@ -24,11 +24,11 @@ module.exports = {
       },
       createdAt: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
