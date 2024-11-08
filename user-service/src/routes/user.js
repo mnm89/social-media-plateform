@@ -1,5 +1,4 @@
 const express = require("express");
-const { Profile } = require("../models");
 const keycloak = require("../config/keycloak");
 const { getAccessToken } = require("../helpers/accessToken");
 
@@ -28,26 +27,13 @@ router.get("/:id", async (req, res) => {
 
     const user = await userResponse.json();
 
-    // Find the profile by Keycloak user ID
-    const profile = await Profile.findOne({
-      where: { userId: id },
-    });
-
-    if (!profile) {
-      return res.status(404).json({ message: "Profile not found" });
-    }
-
-    const { bio, address, phone, privacy } = profile;
     const { username, email } = user;
 
-    // Build the response based on privacy settings
+    //TODO Build the response based on a privacy model
     const response = {
       id,
       username,
       email,
-      bio: privacy.bio === "public" ? bio : null,
-      address: privacy.address === "public" ? address : null,
-      phone: privacy.phone === "public" ? phone : null,
     };
 
     res.json(response);

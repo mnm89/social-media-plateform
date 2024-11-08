@@ -10,6 +10,7 @@ router.get("/", keycloak.protect("realm:user"), async (req, res) => {
   try {
     const friendships = await Friendship.findAll({
       where: { [Op.or]: [{ userId }, { friendId: userId }] },
+      order: [["createdAt", "ASC"]],
     });
     res.json(friendships);
   } catch (error) {
@@ -47,7 +48,7 @@ router.post("/accept/:id", keycloak.protect("realm:user"), async (req, res) => {
 
   try {
     const friendRequest = await Friendship.findByPk(id);
-    if (!friendRequest || friendRequest.status !== "pending") {
+    if (!friendRequest) {
       return res.status(404).json({ message: "Friend request not found." });
     }
 
@@ -91,6 +92,31 @@ router.post("/block/:id", keycloak.protect("realm:user"), async (req, res) => {
     res.status(200).json(friendship);
   } catch (error) {
     console.error("Error blocking user:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
+
+router.delete("/:id", keycloak.protect("realm:user"), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const friendship = await Friendship.findByPk(id);
+    if (!friendship) {
+      return res.status(404).json({ message: "Friendship not found." });
+    }
+
+    const userId = req.kauth.grant.access_token.content.sub;
+    if (friendship.userId !== userId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this friendship request." });
+    }
+
+    await friendship.destroy();
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting friendship:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 });

@@ -31,16 +31,6 @@ class Friendship extends Model {
         timestamps: true,
       }
     );
-    // Adding a unique constraint to prevent duplicate relationships
-    Friendship.addHook("beforeValidate", async (friends) => {
-      const existingRelation = await Friends.findOne({
-        where: {
-          userId: friends.userId,
-          friendId: friends.friendId,
-        },
-      });
-      if (existingRelation) throw new Error("Friendship already exists.");
-    });
     // Add afterFind hook to enrich comments with author data
     Friendship.addHook("afterFind", async (friendships) => {
       if (!friendships) return;
