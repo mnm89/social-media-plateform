@@ -79,16 +79,18 @@ app.get(
 );
 
 // Protected routes for User Service
-app.use(
-  "/users",
-  keycloak.protect((token) => {
-    return token.hasRole("realm:user") || token.hasRole("realm:admin");
-  }),
-  createProxyMiddleware({
-    target: `${process.env.USER_SERVICE_URL}/users`, // URL of the user service
-    changeOrigin: true,
-  })
-);
+["/users", "/friendships"].forEach((path) => {
+  app.use(
+    path,
+    keycloak.protect((token) => {
+      return token.hasRole("realm:user") || token.hasRole("realm:admin");
+    }),
+    createProxyMiddleware({
+      target: `${process.env.USER_SERVICE_URL}${path}`, // URL of the post service
+      changeOrigin: true,
+    })
+  );
+});
 
 // Protected routes for Post Service
 ["/posts", "/comments", "/likes"].forEach((path) => {
