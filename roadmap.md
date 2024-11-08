@@ -25,8 +25,8 @@
 
 ## **Tech Stack**
 
-- **Backend**: Node.js or Go
-- **Frontend**: Next.js or Angular
+- **Backend**: Node.js
+- **Frontend**: Next.js
 - **Data**: Postgres, Redis
 - **Event Broker**: RabbitMQ
 - **Authentication**: Keycloak
