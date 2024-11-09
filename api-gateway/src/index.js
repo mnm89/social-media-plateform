@@ -50,7 +50,7 @@ app.use((req, res, next) => {
     createProxyMiddleware({
       target: `${process.env.USER_SERVICE_URL}`,
       changeOrigin: true,
-      pathRewrite: { [`^/${path}`]: `/auth/${path}` },
+      pathRewrite: { [`^${path}`]: `/auth${path}` },
     })
   );
 });
@@ -74,7 +74,7 @@ app.get(
     target: `${process.env.POST_SERVICE_URL}`,
     changeOrigin: true,
     pathRewrite: (path) => {
-      return path.replace("public-posts", "posts");
+      return path.replace("public-posts", "public");
     },
   })
 );
