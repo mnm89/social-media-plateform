@@ -51,6 +51,12 @@ app.use((req, res, next) => {
       target: `${process.env.USER_SERVICE_URL}`,
       changeOrigin: true,
       pathRewrite: { [`^${path}`]: `/auth${path}` },
+      on: {
+        error: (err, req, res) => {
+          console.error("Proxy Error: ", err);
+          res.status(500).json({ message: "Internal server error" });
+        },
+      },
     })
   );
 });
@@ -64,6 +70,12 @@ app.get(
     pathRewrite: (path) => {
       return path.replace("public-profiles", "profiles");
     },
+    on: {
+      error: (err, req, res) => {
+        console.error("Proxy Error: ", err);
+        res.status(500).json({ message: "Internal server error" });
+      },
+    },
   })
 );
 
@@ -75,6 +87,12 @@ app.get(
     changeOrigin: true,
     pathRewrite: (path) => {
       return path.replace("public-posts", "public");
+    },
+    on: {
+      error: (err, req, res) => {
+        console.error("Proxy Error: ", err);
+        res.status(500).json({ message: "Internal server error" });
+      },
     },
   })
 );
@@ -89,6 +107,12 @@ app.get(
     createProxyMiddleware({
       target: `${process.env.USER_SERVICE_URL}${path}`, // URL of the post service
       changeOrigin: true,
+      on: {
+        error: (err, req, res) => {
+          console.error("Proxy Error: ", err);
+          res.status(500).json({ message: "Internal server error" });
+        },
+      },
     })
   );
 });
@@ -103,6 +127,12 @@ app.get(
     createProxyMiddleware({
       target: `${process.env.POST_SERVICE_URL}${path}`, // URL of the post service
       changeOrigin: true,
+      on: {
+        error: (err, req, res) => {
+          console.error("Proxy Error: ", err);
+          res.status(500).json({ message: "Internal server error" });
+        },
+      },
     })
   );
 });
@@ -110,7 +140,7 @@ app.get(
 // Fallback route to catch access-denied errors
 app.use((err, req, res, next) => {
   console.error("Error in request:", err);
-  res.status(err.status || 500).send(err.message || "Access Denied");
+  res.status(err.status || 500).send(err.message || "Internal server error");
 });
 
 // Start the API Gateway server
