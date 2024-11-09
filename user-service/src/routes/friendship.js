@@ -2,6 +2,7 @@ const express = require("express");
 const { Friendship } = require("../models");
 const keycloak = require("../config/keycloak");
 const { Op } = require("sequelize");
+const { isFriends } = require("../helpers/isFriends");
 
 const router = express.Router();
 
@@ -126,24 +127,9 @@ router.get("/check", keycloak.protect("realm:service"), async (req, res) => {
   const { userId, friendId } = req.query;
 
   try {
-    const friendship = await Friendship.findOne({
-      where: {
-        [Op.or]: [
-          {
-            userId,
-            friendId,
-            status: "accepted",
-          },
-          {
-            userId: friendId,
-            friendId: userId,
-            status: "accepted",
-          },
-        ],
-      },
-    });
+    const isFriend = await isFriends(userId, friendId);
 
-    res.json({ isFriend: !!friendship });
+    res.json({ isFriend });
   } catch (error) {
     console.error("Error checking friendship:", error);
     res.status(500).json({ message: "Failed to check friendship status" });

@@ -1,45 +1,28 @@
 const express = require("express");
 const keycloak = require("../config/keycloak");
-const { getAccessToken } = require("../helpers/accessToken");
+const { getKeycloakUser } = require("../helpers/keycloakUser");
 
 const router = express.Router();
 router.use(keycloak.protect("realm:service"));
 
-// Route to get another user's profile by user ID
+// Route to get another user's attributes (not managed by the privacy model)
+// used by other services mostly
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  try {
-    const token = await getAccessToken();
-    const userResponse = await fetch(
-      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!userResponse.ok) {
-      console.error("Error retrieving user account:", userResponse.status);
-      return res.status(500).json({ message: "Failed to find user" });
-    }
-
-    const user = await userResponse.json();
-
-    const { username, email } = user;
-
-    //TODO Build the response based on a privacy model
-    const response = {
-      id,
-      username,
-      email,
-    };
-
-    res.json(response);
-  } catch (error) {
-    console.error("Error retrieving profile:", error);
-    res.status(500).json({ message: "Failed to retrieve profile" });
+  const user = await getKeycloakUser(id);
+  if (!user) {
+    return res.status(500).json({ message: "Failed to find user" });
   }
+
+  const { username, email, avatar } = user;
+
+  const response = {
+    id,
+    username,
+    email,
+    avatar,
+  };
+
+  res.json(response);
 });
 module.exports = router;

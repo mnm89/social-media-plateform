@@ -28,6 +28,8 @@ async function getKeycloakUser(userId) {
       user = await userResponse.json();
 
       userCache.set(userId, user); // Cache the user details
+    } else {
+      console.error("Error retrieving user account:", userResponse.status);
     }
   }
   return user;

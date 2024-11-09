@@ -3,7 +3,7 @@ const express = require("express");
 const session = require("./config/session");
 const keycloak = require("./config/keycloak");
 const routes = require("./routes");
-const { bootstrapUsersProfile } = require("./config/profile");
+const { ensureUsersProfileAttributes } = require("./helpers/profilePrivacy");
 
 const app = express();
 
@@ -16,6 +16,6 @@ app.use("/", routes);
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  bootstrapUsersProfile();
+  ensureUsersProfileAttributes();
   console.log(`User service running on port ${PORT}`);
 });

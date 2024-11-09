@@ -1,5 +1,3 @@
-const { getAccessToken } = require("../helpers/accessToken");
-
 const attributes = [
   {
     name: "username",
@@ -40,6 +38,18 @@ const attributes = [
     multivalued: false,
   },
   {
+    name: "avatar",
+    displayName: "${avatar}",
+    validations: {},
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
     name: "firstName",
     displayName: "${firstName}",
     validations: {
@@ -73,6 +83,52 @@ const attributes = [
     annotations: {},
     group: null,
   },
+  {
+    name: "phone",
+    displayName: "${phone}",
+    validations: {
+      length: {
+        max: 255,
+      },
+      "person-name-prohibited-characters": {},
+    },
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: "address",
+    displayName: "${address}",
+    validations: {
+      length: {
+        max: 255,
+      },
+      "person-name-prohibited-characters": {},
+    },
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: "bio",
+    displayName: "${bio}",
+    validations: {},
+    permissions: {
+      edit: ["admin", "user"],
+      view: ["admin", "user"],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
 ];
 const groups = [
   {
@@ -81,29 +137,17 @@ const groups = [
     displayDescription: "Attributes, which refer to user metadata",
   },
 ];
-async function bootstrapUsersProfile() {
-  const token = await getAccessToken();
 
-  try {
-    const response = await fetch(
-      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/profile`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `bearer ${token}`,
-        },
-        body: JSON.stringify({
-          attributes,
-          groups,
-        }),
-      }
-    );
-    if (!response.ok) {
-      console.error("Failed to bootstrap users profile:", response.statusText);
-    }
-  } catch (error) {
-    console.error("Failed to bootstrap users profile:", error);
-  }
-}
-module.exports = { bootstrapUsersProfile, attributes };
+const defaultPrivacyAttributes = [
+  { attribute: "firstName", value: "", visibility: "public" },
+  { attribute: "lastName", value: "", visibility: "public" },
+  { attribute: "phone", value: "", visibility: "private" },
+  { attribute: "address", value: "", visibility: "friends-only" },
+  { attribute: "bio", value: "", visibility: "public" },
+];
+
+module.exports = {
+  groups,
+  attributes,
+  defaultPrivacyAttributes,
+};
