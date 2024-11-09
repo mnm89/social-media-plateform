@@ -43,43 +43,44 @@ app.use((req, res, next) => {
   next();
 });
 
-// Open /register, /login and /refresh  routes
-app.post(
-  "/register",
+// Open auth routes
+["/register", "/login", "/refresh"].forEach((path) => {
+  app.post(
+    path,
+    createProxyMiddleware({
+      target: `${process.env.USER_SERVICE_URL}`,
+      changeOrigin: true,
+      pathRewrite: { [`^/${path}`]: `/auth/${path}` },
+    })
+  );
+});
+
+// Open profiles route
+app.get(
+  "/public-profiles/:id",
   createProxyMiddleware({
     target: `${process.env.USER_SERVICE_URL}`,
     changeOrigin: true,
-    pathRewrite: { "^/register": "/auth/register" },
-  })
-);
-app.post(
-  "/login",
-  createProxyMiddleware({
-    target: `${process.env.USER_SERVICE_URL}`,
-    changeOrigin: true,
-    pathRewrite: { "^/login": "/auth/login" },
-  })
-);
-app.post(
-  "/refresh",
-  createProxyMiddleware({
-    target: `${process.env.USER_SERVICE_URL}`,
-    changeOrigin: true,
-    pathRewrite: { "^/refresh": "/auth/refresh" },
+    pathRewrite: (path) => {
+      return path.replace("public-profiles", "profiles");
+    },
   })
 );
 
-// public posts endpoint
+// Open posts endpoint
 app.get(
-  "/public",
+  "/public-posts",
   createProxyMiddleware({
     target: `${process.env.POST_SERVICE_URL}`,
     changeOrigin: true,
+    pathRewrite: (path) => {
+      return path.replace("public-posts", "posts");
+    },
   })
 );
 
 // Protected routes for User Service
-["/users", "/friendships"].forEach((path) => {
+["/users", "/friendships", "/profiles"].forEach((path) => {
   app.use(
     path,
     keycloak.protect((token) => {
