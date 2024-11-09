@@ -17,10 +17,6 @@ class Privacy extends Model {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        value: {
-          type: DataTypes.TEXT,
-          allowNull: true,
-        },
         visibility: {
           type: DataTypes.ENUM("public", "private", "friends-only"),
           allowNull: false,

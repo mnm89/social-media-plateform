@@ -138,16 +138,16 @@ const groups = [
   },
 ];
 
-const defaultPrivacyAttributes = [
-  { attribute: "firstName", value: "", visibility: "public" },
-  { attribute: "lastName", value: "", visibility: "public" },
-  { attribute: "phone", value: "", visibility: "private" },
-  { attribute: "address", value: "", visibility: "friends-only" },
-  { attribute: "bio", value: "", visibility: "public" },
+const defaultPrivacy = [
+  { attribute: "firstName", visibility: "public" },
+  { attribute: "lastName", visibility: "public" },
+  { attribute: "phone", visibility: "private" },
+  { attribute: "address", visibility: "friends-only" },
+  { attribute: "bio", visibility: "public" },
 ];
 
 module.exports = {
   groups,
   attributes,
-  defaultPrivacyAttributes,
+  defaultPrivacy,
 };

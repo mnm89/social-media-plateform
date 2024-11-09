@@ -17,10 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      value: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
       visibility: {
         type: Sequelize.ENUM("public", "private", "friends-only"),
         allowNull: false,
