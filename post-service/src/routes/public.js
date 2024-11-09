@@ -7,6 +7,7 @@ router.get("/", async (req, res) => {
     // Fetch public posts from the database
     const posts = await Post.findAll({
       where: { visibility: "public" },
+      order: [["createdAt", "ASC"]],
     });
 
     res.json(posts);

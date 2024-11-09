@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
   try {
-    const posts = await Post.findAll();
+    const posts = await Post.findAll({ order: [["createdAt", "ASC"]] });
     const visiblePosts = await Promise.all(
       posts.map(async (post) => {
         if (post.visibility === "public") return post;
