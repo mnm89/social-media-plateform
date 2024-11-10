@@ -58,7 +58,8 @@ function FriendshipActions({ friendship, isCurrentUserSender }) {
           </Button>
           <Button
             disabled={isPending}
-            variant="destructive"
+            variant="outline"
+            className="border-destructive text-destructive"
             onClick={removeFriend}
           >
             Remove Request

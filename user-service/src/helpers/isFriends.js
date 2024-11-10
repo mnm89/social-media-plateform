@@ -1,4 +1,5 @@
 const { Friendship } = require("../models");
+const { Op } = require("sequelize");
 
 async function isFriends(user1, user2) {
   const friendship = await Friendship.findOne({

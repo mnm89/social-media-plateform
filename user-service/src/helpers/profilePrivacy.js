@@ -49,7 +49,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
   const isFriend = isAuthenticated
     ? await isFriends(user.id, requesterId)
     : false;
-  const isFriendshipRequested = isAuthenticated
+  const isFriendshipExists = isAuthenticated
     ? await isFriendshipRequested(user.id, requesterId)
     : false;
 
@@ -62,7 +62,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
 
       return p;
     },
-    { id: user.id, isFriend, isFriendshipRequested }
+    { id: user.id, isFriend, isFriendshipExists }
   );
 
   // Retrieve privacy settings and filter based on visibility

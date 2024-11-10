@@ -18,19 +18,23 @@ async function authenticate(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (authHeader) {
     const token = authHeader.split(" ")[1];
-    jwt.verify(
-      token,
-      getKey,
-      { algorithms: ["RS256"] },
-      (err, decodedToken) => {
-        if (!err) {
-          req.user = decodedToken; // Attach the decoded token to the request
-        } else {
-          console.error("Token verification failed:", err);
+    if (!token) {
+      next(); // Proceed without authentication if no token is provided
+    } else {
+      jwt.verify(
+        token,
+        getKey,
+        { algorithms: ["RS256"] },
+        (err, decodedToken) => {
+          if (!err) {
+            req.user = decodedToken; // Attach the decoded token to the request
+          } else {
+            console.error("Token verification failed:", err);
+          }
+          next();
         }
-        next();
-      }
-    );
+      );
+    }
   } else {
     next(); // Proceed without authentication if no token is provided
   }

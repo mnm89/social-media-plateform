@@ -30,29 +30,27 @@ const useTokenManagement = () => {
     Cookies.remove("refresh_token");
   };
 
-  const refreshAccessToken = useCallback(
-    () =>
+  const refreshAccessToken = useCallback(() => {
+    if (!!refreshToken)
       startTransition(async () => {
         try {
-          setTokens(await refreshTokenAction(refreshToken));
+          const tokens = await refreshTokenAction(refreshToken);
+          setTokens(tokens);
         } catch (error) {
           console.error("Failed to refresh access token:", error);
           clearTokens();
         }
-      }),
-    [refreshToken, setTokens]
-  );
+      });
+  }, [refreshToken, setTokens]);
 
   useEffect(() => {
     // Auto-refresh logic
     const intervalId = setInterval(async () => {
-      if (refreshToken) {
-        await refreshAccessToken();
-      }
+      await refreshAccessToken();
     }, 5 * 60 * 1000); // Refresh every 5 minutes
 
     return () => clearInterval(intervalId);
-  }, [refreshToken, refreshAccessToken]);
+  }, [refreshAccessToken]);
 
   return { isAuthenticated, isPending, clearTokens, accessToken, refreshToken };
 };

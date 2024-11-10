@@ -8,8 +8,8 @@ async function handleNonOkResponse(response) {
   }
   return error;
 }
-async function getPublicContent() {
-  const response = await fetch(`${process.env.API_GATEWAY_URL}/public`);
+async function getPublicPosts() {
+  const response = await fetch(`${process.env.API_GATEWAY_URL}/public-posts`);
 
   if (response.ok) return response.json();
   throw await handleNonOkResponse(response);
@@ -47,10 +47,25 @@ async function getFriends(token) {
   throw await handleNonOkResponse(response);
 }
 
+async function getPublicProfile(token, userId) {
+  const response = await fetch(
+    `${process.env.API_GATEWAY_URL}/public-profiles/${userId}`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
+  if (response.ok) return response.json();
+  throw await handleNonOkResponse(response);
+}
+
 module.exports = {
-  getPublicContent,
+  getPublicPosts,
   getPosts,
   getPost,
   handleNonOkResponse,
   getFriends,
+  getPublicProfile,
 };

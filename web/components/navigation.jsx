@@ -10,23 +10,12 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { parseToken, isTokenExpired } from "@/lib/token";
 import { PlusCircle } from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState("");
-  useEffect(() => {
-    setIsAuthenticated(!isTokenExpired(Cookies.get("access_token")));
-    setUserName(parseToken(Cookies.get("access_token")).preferred_username);
-  }, []);
-
-  const handleLogout = async () => {
-    Cookies.remove("access_token");
-    Cookies.remove("refresh_token");
-    window.location.href = "/";
-  };
+  const { isAuthenticated, currentUser, logout } = useAuth();
 
   return (
     <nav className="bg-gray-800 text-white p-4">
@@ -34,10 +23,10 @@ export default function Navbar() {
         {/* Logo/Home Link */}
         <div className="flex gap-6">
           <Link href="/" className="text-lg font-semibold hover:underline">
-            Home
+            Public
           </Link>
 
-          {isAuthenticated && (
+          {isAuthenticated() && (
             <Link
               href="/posts"
               className="text-lg font-semibold hover:underline"
@@ -49,32 +38,34 @@ export default function Navbar() {
 
         {/* Links for larger screens */}
         <div className="hidden md:flex space-x-4 items-center">
-          <Button asChild variant="secondary">
-            <Link href="/create-post">
-              <PlusCircle /> Create Post
-            </Link>
-          </Button>
-          {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="link text-secondary">{userName}</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white text-gray-800">
-                <DropdownMenuItem asChild>
-                  <Link href="/friends" className="w-full text-left">
-                    Friends
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/account-settings" className="w-full text-left">
-                    Account Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {isAuthenticated() ? (
+            <>
+              <Button asChild variant="secondary">
+                <Link href="/create-post">
+                  <PlusCircle /> Create Post
+                </Link>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="link text-secondary">
+                    {currentUser?.preferred_username}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-white text-gray-800">
+                  <DropdownMenuItem asChild>
+                    <Link href="/friends" className="w-full text-left">
+                      Friends
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account-settings" className="w-full text-left">
+                      Account Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <>
               <Link href="/login" className="hover:underline">
@@ -96,10 +87,13 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden flex flex-col items-center space-y-2 mt-2">
           <Link href="/" className="hover:underline">
-            Home
+            Public
           </Link>
-          {isAuthenticated ? (
+          {isAuthenticated() ? (
             <>
+              <Link href="/posts" className="hover:underline">
+                Premium
+              </Link>
               <Link href="/account-settings" className="hover:underline">
                 Account Settings
               </Link>

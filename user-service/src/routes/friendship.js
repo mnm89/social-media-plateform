@@ -2,7 +2,7 @@ const express = require("express");
 const { Friendship } = require("../models");
 const keycloak = require("../config/keycloak");
 const { Op } = require("sequelize");
-const { isFriends } = require("../helpers/isFriends");
+const { isFriends, isFriendshipRequested } = require("../helpers/isFriends");
 
 const router = express.Router();
 
@@ -27,11 +27,8 @@ router.post("/request", keycloak.protect("realm:user"), async (req, res) => {
 
   try {
     // Check if a friendship already exists
-    const existingFriendship = await Friendship.findOne({
-      where: { userId, friendId },
-    });
-
-    if (existingFriendship) {
+    const isFriendshipExists = await isFriendshipRequested(userId, friendId);
+    if (isFriendshipExists) {
       return res.status(400).json({ message: "Friend request already sent." });
     }
 

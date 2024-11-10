@@ -6,7 +6,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getPublicContent } from "@/lib/api";
+import { getPublicPosts } from "@/lib/api";
 
 import Link from "next/link";
 import MarkdownIt from "markdown-it";
@@ -43,7 +43,7 @@ const PostCard = ({ post }) => {
 };
 
 export default async function Page() {
-  const posts = await getPublicContent();
+  const posts = await getPublicPosts();
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Public Posts </h1>

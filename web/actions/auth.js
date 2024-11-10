@@ -11,7 +11,7 @@ export async function refreshToken(refreshToken = "") {
   if (!refreshToken) {
     throw new Error("No refresh token found");
   }
-  console.log("Refreshing access token");
+
   const response = await fetch(`${process.env.API_GATEWAY_URL}/refresh`, {
     method: "POST",
     headers: {
@@ -21,6 +21,7 @@ export async function refreshToken(refreshToken = "") {
   });
   if (response.ok) return response.json();
 
+  console.error("Failed refreshing access token", response.statusText);
   throw await handleNonOkResponse(response);
 }
 
