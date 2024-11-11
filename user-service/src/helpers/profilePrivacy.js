@@ -52,6 +52,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
   const isFriendshipExists = isAuthenticated
     ? await isFriendshipRequested(user.id, requesterId)
     : false;
+  const isSameUser = user.id === requesterId;
 
   const userProfile = attributes.reduce(
     (p, c) => {
@@ -75,6 +76,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
 
   privacySettings.forEach((setting) => {
     if (
+      isSameUser ||
       setting.visibility === "public" ||
       (setting.visibility === "private" && isAuthenticated) ||
       (setting.visibility === "friends-only" && isFriend)
@@ -83,7 +85,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
     }
   });
 
-  return filteredProfile;
+  return { profile: filteredProfile, privacy: privacySettings };
 }
 
 module.exports = {
