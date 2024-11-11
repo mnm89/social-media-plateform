@@ -1,15 +1,23 @@
 import { cookies } from "next/headers";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/unauthorized";
+import PrivacyCard from "@/components/fragments/privacy-card";
+import { isTokenExpired, parseToken } from "@/lib/token";
+import { getCurrentProfile, getPublicProfile } from "@/lib/api";
 
 export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
 
-  if (!token) {
+  if (isTokenExpired(token)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <UnauthorizedCard />
@@ -17,6 +25,7 @@ export default async function Page() {
     );
   }
 
+  const { profile, privacy } = await getCurrentProfile(token);
   // Render protected content
 
   return (
@@ -26,23 +35,51 @@ export default async function Page() {
       {/* Profile Information Section */}
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="text-xl font-medium">Profile Information</h2>
-          <p className="text-sm text-gray-500">Update your profile details</p>
+          <h2 className="text-xl font-medium">Public Identity</h2>
+          <p className="text-sm text-gray-500">
+            These information can be accessed publicly
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" placeholder="Your Name" />
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+              <Label htmlFor="name">Username / Author name</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Your Name"
+                value={profile.username}
+              />
+            </div>
+            <div>
+              <Label htmlFor="name">Avatar url</Label>
+              <Input
+                id="avatar"
+                type="text"
+                placeholder="Your Name"
+                value={profile.avatar}
+              />
+            </div>
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="you@example.com" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={profile.email}
+            />
           </div>
+        </CardContent>
+        <CardFooter className="justify-end">
           <Button className="mt-4" variant="primary">
             Save Changes
           </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
+
+      {/* Profile Privacy Section */}
+      <PrivacyCard profile={profile} privacy={privacy} />
 
       {/* Password Section */}
       <Card className="mb-6">
@@ -51,26 +88,31 @@ export default async function Page() {
           <p className="text-sm text-gray-500">Update your password</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="currentPassword">Current Password</Label>
-            <Input
-              id="currentPassword"
-              type="password"
-              placeholder="Current Password"
-            />
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+              <Label htmlFor="currentPassword">Current Password</Label>
+              <Input
+                id="currentPassword"
+                type="password"
+                placeholder="Current Password"
+              />
+            </div>
+            <div>
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                placeholder="New Password"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="newPassword">New Password</Label>
-            <Input
-              id="newPassword"
-              type="password"
-              placeholder="New Password"
-            />
-          </div>
+        </CardContent>
+
+        <CardFooter className="justify-end">
           <Button className="mt-4" variant="primary">
             Update Password
           </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
 
       {/* Notification Preferences Section */}

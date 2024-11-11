@@ -60,6 +60,16 @@ async function getPublicProfile(token, userId) {
   if (response.ok) return response.json();
   throw await handleNonOkResponse(response);
 }
+async function getCurrentProfile(token) {
+  const response = await fetch(`${process.env.API_GATEWAY_URL}/profiles`, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  if (response.ok) return response.json();
+  throw await handleNonOkResponse(response);
+}
 
 module.exports = {
   getPublicPosts,
@@ -68,4 +78,5 @@ module.exports = {
   handleNonOkResponse,
   getFriends,
   getPublicProfile,
+  getCurrentProfile,
 };
