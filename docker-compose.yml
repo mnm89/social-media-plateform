@@ -33,6 +33,23 @@ services:
     volumes:
       - post_data:/var/lib/postgresql/data
 
+  file-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: file_user
+      POSTGRES_PASSWORD: file_password
+      POSTGRES_DB: file_service
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U file_user -d file_service"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "5435:5432"
+    volumes:
+      - file_data:/var/lib/postgresql/data
+
   keycloak-db:
     image: postgres:latest
     environment:
@@ -92,12 +109,15 @@ services:
       - KEYCLOAK_CLIENT_ID=web-client
       - USER_SERVICE_URL=http://user-service:3000
       - POST_SERVICE_URL=http://post-service:3000
+      - FILE_SERVICE_URL=http://file-service:3000
     depends_on:
       keycloak:
         condition: service_healthy
       user-service:
         condition: service_started
       post-service:
+        condition: service_started
+      file-service:
         condition: service_started
 
   user-service:
@@ -112,8 +132,6 @@ services:
       - KEYCLOAK_CLIENT_ID=user-management-service
       - KEYCLOAK_CLIENT_SECRET=YXbgBO3JcrBOqfpzoMfQf2gPnfZrBTuw
       - KEYCLOAK_WEB_CLIENT_ID=web-client
-    volumes:
-      - ./scripts/wait-for-it.sh:/app/wait-for-it.sh # Mount wait-for-it.sh
     depends_on:
       keycloak:
         condition: service_healthy
@@ -138,6 +156,45 @@ services:
       user-service:
         condition: service_started
 
+  file-service:
+    build: ./file-service
+    ports:
+      - "3003:3000"
+    environment:
+      - DATABASE_URL=postgres://file_user:file_password@localhost:5435/file_service
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=social-media-platform
+      - KEYCLOAK_CLIENT_ID=file-management-service
+      - KEYCLOAK_CLIENT_SECRET=X9Lq1PkArTY7Mnb8GcX2Fv4Qo6ZJepW3
+      - SESSION_SECRET=session_secret
+    depends_on:
+      file-db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  minio:
+    container_name: minio
+    image: minio/minio:${MINIO_VERSION:-RELEASE.2024-10-13T13-34-11Z.fips}
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - minio-data:/data
+    expose:
+      - "9000"
+      - "9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - 9000:9000
+      - 9001:9001
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -157,7 +214,7 @@ services:
   notification-service:
     build: ./notification-service
     ports:
-      - "3003:3000"
+      - "3004:3000"
     environment:
       REDIS_HOST: notification-cache
     depends_on:
@@ -167,7 +224,7 @@ services:
   recommendation-service:
     build: ./recommendation-service
     ports:
-      - "3004:3000"
+      - "3005:3000"
     environment:
       REDIS_HOST: redis
     depends_on:
@@ -177,4 +234,5 @@ services:
 volumes:
   user_data:
   post_data:
+  file_data:
   keycloak_data:
