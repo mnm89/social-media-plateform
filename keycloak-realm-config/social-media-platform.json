@@ -52,6 +52,18 @@
             "defaultRoles": [
                 "post-service"
             ]
+        },
+        {
+            "clientId": "file-management-service",
+            "enabled": true,
+            "clientAuthenticatorType": "client-secret",
+            "secret": "X9Lq1PkArTY7Mnb8GcX2Fv4Qo6ZJepW3",
+            "serviceAccountsEnabled": true,
+            "protocol": "openid-connect",
+            "fullScopeAllowed": false,
+            "defaultRoles": [
+                "file-service"
+            ]
         }
     ],
     "roles": {
@@ -94,6 +106,18 @@
                 {
                     "name": "post-service",
                     "description": "Composite role for post management",
+                    "composite": true,
+                    "composites": {
+                        "realm": [
+                            "service"
+                        ]
+                    }
+                }
+            ],
+            "file-management-service": [
+                {
+                    "name": "file-service",
+                    "description": "Composite role for file management",
                     "composite": true,
                     "composites": {
                         "realm": [
