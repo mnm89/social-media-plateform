@@ -24,7 +24,11 @@ module.exports = {
         allowNull: false,
         defaultValue: "other",
       },
-      url: {
+      bucket: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      path: {
         type: Sequelize.STRING,
         allowNull: false,
       },

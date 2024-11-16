@@ -23,7 +23,11 @@ class Storage extends Model {
           allowNull: false,
           defaultValue: "other",
         },
-        url: {
+        bucket: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        path: {
           type: DataTypes.STRING,
           allowNull: false,
         },
