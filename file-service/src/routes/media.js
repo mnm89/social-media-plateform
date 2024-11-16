@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const keycloak = require("../config/keycloak");
 const { Storage } = require("../models");
 const path = require("path");
 /**
@@ -12,7 +13,7 @@ const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() }).single("file");
 
-router.post("/:postId", async (req, res) => {
+router.post("/:postId", keycloak.protect("realm:user"), async (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.status(500).json({ error: err.message });
     const file = req.file;
@@ -50,52 +51,66 @@ router.post("/:postId", async (req, res) => {
   });
 });
 
-router.get("/:postId", async (req, res) => {
-  try {
-    const medias = await Storage.findAll({
-      where: {
-        externalId: req.params.postId,
-        entityType: "post",
-      },
-      order: [["createdAt", "ASC"]],
-    });
+router.get(
+  "/:postId",
+  keycloak.protect((token) => {
+    return token.hasRole("realm:user") || token.hasRole("realm:service");
+  }),
+  async (req, res) => {
+    try {
+      const medias = await Storage.findAll({
+        where: {
+          externalId: req.params.postId,
+          entityType: "post",
+        },
+        order: [["createdAt", "ASC"]],
+      });
 
-    const signedMedias = await Promise.all(
-      medias.map(async (storage) => {
-        const signedUrl = await minioClient.presignedUrl(
-          "GET",
-          storage.get("bucket"),
-          storage.get("path"),
-          60 * 60 // Expiry time in seconds (e.g., 1 hour)
-        );
-        return {
-          ...storage.dataValues,
-          url: signedUrl,
-        };
-      })
-    );
+      const signedMedias = await Promise.all(
+        medias.map(async (storage) => {
+          const signedUrl = await minioClient.presignedUrl(
+            "GET",
+            storage.get("bucket"),
+            storage.get("path"),
+            60 * 60 // Expiry time in seconds (e.g., 1 hour)
+          );
+          return {
+            ...storage.dataValues,
+            url: signedUrl,
+          };
+        })
+      );
 
-    res.json(signedMedias);
-  } catch (error) {
-    console.error("Error retrieving medias:", error);
-    res.status(500).json({ message: "Failed to retrieve post medias" });
+      res.json(signedMedias);
+    } catch (error) {
+      console.error("Error retrieving medias:", error);
+      res.status(500).json({ message: "Failed to retrieve post medias" });
+    }
   }
-});
+);
 
-router.delete("/:storageId", async (req, res) => {
-  try {
-    const storage = await Storage.findByPk(req.params.storageId);
+router.delete(
+  "/:storageId",
+  keycloak.protect("realm:user"),
+  async (req, res) => {
+    try {
+      const storage = await Storage.findByPk(req.params.storageId);
 
-    if (!storage) return res.status(404).json({ message: "Storage not found" });
+      if (!storage)
+        return res.status(404).json({ message: "Storage not found" });
 
-    await minioClient.removeObject(storage.get("bucket"), storage.get("path"));
-    await storage.destroy();
+      await minioClient.removeObject(
+        storage.get("bucket"),
+        storage.get("path")
+      );
+      await storage.destroy();
 
-    res.status(204).send(); // No content response
-  } catch (error) {
-    console.error("Error retrieving storage:", error);
-    res.status(500).json({ message: "Failed to retrieve storage media" });
+      res.status(204).send(); // No content response
+    } catch (error) {
+      console.error("Error retrieving storage:", error);
+      res.status(500).json({ message: "Failed to retrieve storage media" });
+    }
   }
-});
+);
 
 module.exports = router;
