@@ -1,5 +1,6 @@
 services:
   user-db:
+    container_name: user-db
     image: postgres:latest
     environment:
       POSTGRES_USER: user_user
@@ -17,6 +18,7 @@ services:
       - user_data:/var/lib/postgresql/data
 
   post-db:
+    container_name: post-db
     image: postgres:latest
     environment:
       POSTGRES_USER: post_user
@@ -34,6 +36,7 @@ services:
       - post_data:/var/lib/postgresql/data
 
   file-db:
+    container_name: file-db
     image: postgres:latest
     environment:
       POSTGRES_USER: file_user
@@ -51,6 +54,7 @@ services:
       - file_data:/var/lib/postgresql/data
 
   keycloak-db:
+    container_name: keycloak-db
     image: postgres:latest
     environment:
       POSTGRES_DB: keycloak
@@ -66,6 +70,7 @@ services:
       - keycloak_data:/var/lib/postgresql/data
 
   keycloak:
+    container_name: keycloak
     image: keycloak/keycloak:26.0.5
     environment:
       KC_DB: postgres
@@ -99,6 +104,7 @@ services:
       - ./keycloak-realm-config/:/opt/keycloak/data/import/ # Import realm files
 
   api-gateway:
+    container_name: api-gateway
     build: ./api-gateway
     ports:
       - "80:3000"
@@ -121,6 +127,7 @@ services:
         condition: service_started
 
   user-service:
+    container_name: user-service
     build: ./user-service
     ports:
       - "3001:3000"
@@ -139,6 +146,7 @@ services:
         condition: service_healthy
 
   post-service:
+    container_name: post-service
     build: ./post-service
     ports:
       - "3002:3000"
@@ -157,6 +165,7 @@ services:
         condition: service_started
 
   file-service:
+    container_name: file-service
     build: ./file-service
     ports:
       - "3003:3000"
@@ -167,6 +176,11 @@ services:
       - KEYCLOAK_CLIENT_ID=file-management-service
       - KEYCLOAK_CLIENT_SECRET=X9Lq1PkArTY7Mnb8GcX2Fv4Qo6ZJepW3
       - SESSION_SECRET=session_secret
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET_NAME=assets
     depends_on:
       file-db:
         condition: service_healthy
@@ -196,22 +210,26 @@ services:
       - 9001:9001
 
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
 
   notification-cache:
+    container_name: notification-cache
     image: redis:latest
     ports:
       - "6380:6379" # Separate Redis instance for notification storage (if desired)
 
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
 
   notification-service:
+    container_name: notification-service
     build: ./notification-service
     ports:
       - "3004:3000"
@@ -222,6 +240,7 @@ services:
       - rabbitmq
 
   recommendation-service:
+    container_name: recommendation-service
     build: ./recommendation-service
     ports:
       - "3005:3000"
