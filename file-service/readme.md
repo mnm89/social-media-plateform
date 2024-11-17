@@ -23,29 +23,29 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 ## Features
 
 1. **File Upload**
-   - Upload files with metadata such as `external_id`, `entity_type`, and `type`.
+   - Upload files with metadata such as `externalId`, `entityType`, and `type`.
    - Validate file types and sizes during upload.
 
 2. **File Metadata Management**
    - Store and retrieve file metadata:
      - `id`: Unique identifier for the file.
-     - `external_id`: ID of the associated entity (e.g., user, post).
-     - `entity_type`: Type of the associated entity (e.g., `user`, `post`).
+     - `externalId`: ID of the associated entity (e.g., user, post).
+     - `entityType`: Type of the associated entity (e.g., `user`, `post`).
      - `type`: File category (e.g., avatar, image, video, sound).
      - `url`: Public or pre-signed URL for file access.
-     - `created_at`: Timestamp of file upload.
-     - `updated_at`: Timestamp of last update.
+     - `createdAt`: Timestamp of file upload.
+     - `updatedAt`: Timestamp of last update.
 
 3. **Retrieve Files**
-   - Get metadata or URLs for specific files by `external_id` and `entity_type`.
-   - Support fetching all files linked to an `external_id` and a specific entity type.
+   - Get metadata or URLs for specific files by `externalId` and `entityType`.
+   - Support fetching all files linked to an `externalId` and a specific entity type.
 
 4. **MinIO Integration**
    - Store all media files in a MinIO bucket.
    - Generate pre-signed URLs for direct file uploads and downloads.
 
 5. **File Deletion**
-   - Delete files by ID or `external_id` and type.
+   - Delete files by ID or `externalId` and type.
    - Remove associated metadata and object storage files.
 
 6. **Authentication and Authorization**
@@ -62,8 +62,8 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 
   ```json
   {
-    "external_id": "12345",
-    "entity_type": "post",
+    "externalId": "12345",
+    "entityType": "post",
     "type": "image",
     "file": "<binary>"
   }
@@ -75,11 +75,11 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
   {
     "id": "abc123",
     "url": "https://minio.example.com/bucket/image-abc123.jpg",
-    "external_id": "12345",
-    "entity_type": "post",
+    "externalId": "12345",
+    "entityType": "post",
     "type": "image",
-    "created_at": "2024-11-15T12:00:00Z",
-    "updated_at": "2024-11-15T12:00:00Z"
+    "createdAt": "2024-11-15T12:00:00Z",
+    "updatedAt": "2024-11-15T12:00:00Z"
   }
   ```
 
@@ -94,11 +94,11 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
   {
     "id": "abc123",
     "url": "https://minio.example.com/bucket/image-abc123.jpg",
-    "external_id": "12345",
-    "entity_type": "post",
+    "externalId": "12345",
+    "entityType": "post",
     "type": "image",
-    "created_at": "2024-11-15T12:00:00Z",
-    "updated_at": "2024-11-15T12:00:00Z"
+    "createdAt": "2024-11-15T12:00:00Z",
+    "updatedAt": "2024-11-15T12:00:00Z"
   }
   ```
 
@@ -106,7 +106,7 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 
 `GET /files`
 
-- **Request**: Query params (`external_id`, `entity_type`, `type`)
+- **Request**: Query params (`externalId`, `entityType`, `type`)
 - **Response**:
 
   ```json
@@ -114,11 +114,11 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
     {
       "id": "abc123",
       "url": "https://minio.example.com/bucket/image-abc123.jpg",
-      "external_id": "12345",
-      "entity_type": "post",
+      "externalId": "12345",
+      "entityType": "post",
       "type": "image",
-      "created_at": "2024-11-15T12:00:00Z",
-      "updated_at": "2024-11-15T12:00:00Z"
+      "createdAt": "2024-11-15T12:00:00Z",
+      "updatedAt": "2024-11-15T12:00:00Z"
     }
   ]
   ```
@@ -139,16 +139,14 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 
 ### Generate Pre-Signed URL
 
-`POST /files/presigned-url`
+`POST /files/signed-url`
 
 - **Request**:
 
   ```json
   {
-    "external_id": "12345",
-    "entity_type": "post",
-    "type": "image",
-    "file_name": "example.jpg"
+  
+    "StorageId": "1234"
   }
   ```
 
@@ -156,7 +154,7 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 
   ```json
   {
-    "presigned_url": "https://minio.example.com/bucket/example.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256..."
+    "signedUrl": "https://minio.example.com/bucket/example.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256..."
   }
   ```
 
@@ -207,17 +205,18 @@ A microservice designed to manage media files (images, videos, sounds, etc.) for
 | Field         | Type        | Description                                 |
 |---------------|-------------|---------------------------------------------|
 | `id`          | UUID        | Unique identifier for the file.            |
-| `external_id` | UUID        | ID of the associated entity.               |
-| `entity_type` | String      | Type of the associated entity (e.g., `user`, `post`). |
+| `externalId` | UUID        | ID of the associated entity.               |
+| `entityType` | String      | Type of the associated entity (e.g., `user`, `post`). |
 | `type`        | String      | File type (e.g., avatar, video).           |
 | `url`         | String      | URL for accessing the file.                |
-| `created_at`  | Timestamp   | Timestamp of file upload.                  |
-| `updated_at`  | Timestamp   | Timestamp of last metadata update.         |
+| `createdAt`  | Timestamp   | Timestamp of file upload.                  |
+| `updatedAt`  | Timestamp   | Timestamp of last metadata update.         |
 
 ### Integration with MinIO
 
 - Files are stored in MinIO with a hierarchical structure:
-  - Example: `bucket-name/entity-type/<file-id>.jpg`
+  - Example: `bucket-name/externalId/<id>.jpg`
+  - Or: `bucket-name/<id>.jpg`
 
 ## Future Enhancements
 
