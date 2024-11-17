@@ -107,10 +107,16 @@ app.get(
     createProxyMiddleware({
       target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
       changeOrigin: true,
+      preserveHeaderKeyCase: true,
       on: {
         error: (err, req, res) => {
           console.error("Proxy Error: ", err);
           res.status(500).json({ message: "Internal server error" });
+        },
+        proxyReq: (proxyReq, req, res) => {
+          // Remove body parsing headers to prevent proxy issues
+          proxyReq.removeHeader("Content-Length");
+          proxyReq.setHeader("Transfer-Encoding", "chunked");
         },
       },
     })
@@ -167,10 +173,16 @@ app.get(
     createProxyMiddleware({
       target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
       changeOrigin: true,
+      preserveHeaderKeyCase: true,
       on: {
         error: (err, req, res) => {
           console.error("Proxy Error: ", err);
           res.status(500).json({ message: "Internal server error" });
+        },
+        proxyReq: (proxyReq, req, res) => {
+          // Remove body parsing headers to prevent proxy issues
+          proxyReq.removeHeader("Content-Length");
+          proxyReq.setHeader("Transfer-Encoding", "chunked");
         },
       },
     })
