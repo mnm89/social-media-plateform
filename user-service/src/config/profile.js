@@ -38,18 +38,6 @@ const attributes = [
     multivalued: false,
   },
   {
-    name: "avatar",
-    displayName: "${avatar}",
-    validations: {},
-    permissions: {
-      edit: ["admin", "user"],
-      view: ["admin", "user"],
-    },
-    multivalued: false,
-    annotations: {},
-    group: null,
-  },
-  {
     name: "firstName",
     displayName: "${firstName}",
     validations: {

@@ -57,7 +57,17 @@ router.post("/", keycloak.protect("realm:user"), async (req, res) => {
       );
 
       await storage.save();
-      res.status(201).json(storage);
+
+      const signedUrl = new URL(
+        await minioClient.presignedUrl(
+          "GET",
+          storage.get("bucket"),
+          storage.get("path")
+        )
+      );
+
+      const url = `${signedUrl.origin}${signedUrl.pathname}`;
+      res.status(201).json({ ...storage.dataValues, url });
     } catch (error) {
       console.error("Error during upload process:", error);
       res.status(500).json({ error: "Failed to upload file." });
@@ -77,8 +87,8 @@ router.get("/", keycloak.protect("realm:user"), async (req, res) => {
     const signedUrl = new URL(
       await minioClient.presignedUrl(
         "GET",
-        storage.get("bucket"),
-        storage.get("path")
+        avatar.get("bucket"),
+        avatar.get("path")
       )
     );
 
@@ -102,15 +112,15 @@ router.get("/:userId", keycloak.protect("realm:service"), async (req, res) => {
     const signedUrl = new URL(
       await minioClient.presignedUrl(
         "GET",
-        storage.get("bucket"),
-        storage.get("path")
+        avatar.get("bucket"),
+        avatar.get("path")
       )
     );
     const url = `${signedUrl.origin}${signedUrl.pathname}`;
 
     res.json({ ...avatar.dataValues, url });
   } catch (error) {
-    console.error("Error retrieving medias:", error);
+    console.error("Error retrieving avatar:", error);
     res.status(500).json({ message: "Failed to retrieve post medias" });
   }
 });

@@ -2,19 +2,15 @@ const { getAccessToken } = require("./accessToken");
 const { Privacy } = require("../models");
 const { isFriends, isFriendshipRequested } = require("./isFriends");
 const { attributes, groups, defaultPrivacy } = require("../config/profile");
+const { getUserAvatar } = require("./storageUser");
 
 async function ensurePrivacySettings(userId) {
-  // Check if any privacy settings exist for this user
-  const existingSettings = await Privacy.findOne({ where: { userId } });
-
-  if (!existingSettings) {
-    // No settings found, so create default settings
-    const defaultSettings = defaultPrivacy.map((attr) => ({
-      userId,
-      ...attr,
-    }));
-    await Privacy.bulkCreate(defaultSettings);
-  }
+  const promises = defaultPrivacy.map(async ({ attribute, visibility }) => {
+    const privacy = await Privacy.findOne({ where: { userId, attribute } });
+    // No privacy found, so create default attribute privacy
+    if (!privacy) await Privacy.create({ attribute, visibility, userId });
+  });
+  await Promise.all(promises);
 }
 async function ensureUsersProfileAttributes() {
   const token = await getAccessToken();
@@ -54,6 +50,8 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
     : false;
   const isSameUser = user.id === requesterId;
 
+  const avatar = await getUserAvatar(user.id);
+
   const userProfile = attributes.reduce(
     (p, c) => {
       if (user.attributes && user.attributes[c.name])
@@ -63,7 +61,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
 
       return p;
     },
-    { id: user.id, isFriend, isFriendshipExists }
+    { id: user.id, avatar, isFriend, isFriendshipExists }
   );
 
   // Retrieve privacy settings and filter based on visibility

@@ -2,12 +2,8 @@ const NodeCache = require("node-cache");
 const { getAccessToken } = require("./accessToken");
 const userCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 async function getUserName(userId) {
-  const { username } = await getKeycloakUser(userId);
-  return username;
-}
-async function getUserAvatar(userId) {
-  const { avatar } = await getKeycloakUser(userId);
-  return avatar;
+  const user = await getKeycloakUser(userId);
+  return user?.username;
 }
 
 async function getKeycloakUser(userId) {
@@ -35,4 +31,4 @@ async function getKeycloakUser(userId) {
   return user;
 }
 
-module.exports = { getKeycloakUser, getUserAvatar, getUserName };
+module.exports = { getKeycloakUser, getUserName };

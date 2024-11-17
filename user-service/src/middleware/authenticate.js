@@ -29,7 +29,7 @@ async function authenticate(req, res, next) {
           if (!err) {
             req.user = decodedToken; // Attach the decoded token to the request
           } else {
-            console.error("Token verification failed:", err);
+            console.debug("Token verification failed:", err);
           }
           next();
         }

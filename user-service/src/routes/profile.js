@@ -6,6 +6,7 @@ const {
 const { getKeycloakUser } = require("../helpers/keycloakUser");
 const keycloak = require("../config/keycloak");
 const authenticate = require("../middleware/authenticate");
+const { getAccessToken } = require("../helpers/accessToken");
 
 const router = express.Router();
 
@@ -25,6 +26,39 @@ router.get("/", keycloak.protect("realm:user"), async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
   const user = await getKeycloakUser(userId);
   await ensurePrivacySettings(userId);
+  const { profile, privacy } = await buildUserProfileWithPrivacy(user, userId);
+  res.json({ profile, privacy });
+});
+
+router.put("/", keycloak.protect("realm:user"), async (req, res) => {
+  const userId = req.kauth.grant.access_token.content.sub;
+  const patch = req.body;
+
+  const payload = {
+    attributes: Object.keys(patch).reduce((p, c) => {
+      p[c] = [patch[c]];
+    }, {}),
+  };
+  console.log({ payload });
+  const token = await getAccessToken();
+  const response = await fetch(
+    `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+  if (!response.ok) {
+    console.error("Error patching user profile:", response.status);
+
+    return res.status(500).json({ message: "Error patching user profile" });
+  }
+
+  const user = await getKeycloakUser(userId);
   const { profile, privacy } = await buildUserProfileWithPrivacy(user, userId);
   res.json({ profile, privacy });
 });

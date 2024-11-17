@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
-const { getUserName, getUserAvatar } = require("../helpers/keycloakUser");
+const { getUserName } = require("../helpers/keycloakUser");
+const { getUserAvatar } = require("../helpers/storageUser");
 
 class Friendship extends Model {
   static initModel(sequelize) {

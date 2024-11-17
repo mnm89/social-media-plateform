@@ -1,6 +1,7 @@
 const express = require("express");
 const keycloak = require("../config/keycloak");
 const { getKeycloakUser } = require("../helpers/keycloakUser");
+const { getUserAvatar } = require("../helpers/storageUser");
 
 const router = express.Router();
 router.use(keycloak.protect("realm:service"));
@@ -14,7 +15,9 @@ router.get("/:id", async (req, res) => {
     return res.status(500).json({ message: "Failed to find user" });
   }
 
-  const { username, email, avatar } = user;
+  const { username, email } = user;
+
+  const avatar = await getUserAvatar(id);
 
   const response = {
     id,
