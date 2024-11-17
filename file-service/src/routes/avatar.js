@@ -89,6 +89,7 @@ router.get("/", keycloak.protect("realm:user"), async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve post medias" });
   }
 });
+
 router.get("/:userId", keycloak.protect("realm:service"), async (req, res) => {
   const userId = req.params.userId;
   try {
