@@ -97,6 +97,26 @@ app.get(
   })
 );
 
+// Open routes for File Service
+["/files"].forEach((path) => {
+  app.use(
+    path,
+    keycloak.protect((token) => {
+      return token.hasRole("realm:user") || token.hasRole("realm:admin");
+    }),
+    createProxyMiddleware({
+      target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
+      changeOrigin: true,
+      on: {
+        error: (err, req, res) => {
+          console.error("Proxy Error: ", err);
+          res.status(500).json({ message: "Internal server error" });
+        },
+      },
+    })
+  );
+});
+
 // Protected routes for User Service
 ["/users", "/friendships", "/profiles"].forEach((path) => {
   app.use(
@@ -126,6 +146,26 @@ app.get(
     }),
     createProxyMiddleware({
       target: `${process.env.POST_SERVICE_URL}${path}`, // URL of the post service
+      changeOrigin: true,
+      on: {
+        error: (err, req, res) => {
+          console.error("Proxy Error: ", err);
+          res.status(500).json({ message: "Internal server error" });
+        },
+      },
+    })
+  );
+});
+
+// Protected routes for File Service
+["/avatars", "/medias"].forEach((path) => {
+  app.use(
+    path,
+    keycloak.protect((token) => {
+      return token.hasRole("realm:user") || token.hasRole("realm:admin");
+    }),
+    createProxyMiddleware({
+      target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
       changeOrigin: true,
       on: {
         error: (err, req, res) => {
