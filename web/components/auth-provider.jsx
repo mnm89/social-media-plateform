@@ -6,16 +6,15 @@ import { parseToken } from "@/lib/token";
 
 const AuthContext = createContext({
   currentUser: null,
-  isAuthenticated: () => false,
   logout: () => {},
 });
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const { accessToken, clearTokens, isAuthenticated } = useTokenManagement();
+  const { accessToken, clearTokens } = useTokenManagement();
 
   useEffect(() => {
-    setCurrentUser(isAuthenticated() ? parseToken(accessToken) : null);
+    setCurrentUser(accessToken ? parseToken(accessToken) : null);
   }, [accessToken]);
 
   function logout() {
@@ -25,7 +24,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ currentUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

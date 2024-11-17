@@ -1,7 +1,6 @@
 "use client";
 
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,7 +14,7 @@ import { useAuth } from "@/components/auth-provider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, currentUser, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   return (
     <nav className="bg-gray-800 text-white p-4">
@@ -26,7 +25,7 @@ export default function Navbar() {
             Public
           </Link>
 
-          {isAuthenticated() && (
+          {currentUser && (
             <Link
               href="/posts"
               className="text-lg font-semibold hover:underline"
@@ -38,7 +37,7 @@ export default function Navbar() {
 
         {/* Links for larger screens */}
         <div className="hidden md:flex space-x-4 items-center">
-          {isAuthenticated() ? (
+          {currentUser ? (
             <>
               <Button asChild variant="secondary">
                 <Link href="/create-post">
@@ -85,21 +84,21 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden flex flex-col items-center space-y-2 mt-2">
-          <Link href="/" className="hover:underline">
-            Public
-          </Link>
-          {isAuthenticated() ? (
+        <div className="md:hidden flex flex-col items-left space-y-2 mt-2">
+          {currentUser ? (
             <>
-              <Link href="/posts" className="hover:underline">
-                Premium
+              <Link href="/create-post" className="hover:underline">
+                Create Post
+              </Link>
+              <Link href="/friends" className="hover:underline">
+                Friends
               </Link>
               <Link href="/account-settings" className="hover:underline">
                 Account Settings
               </Link>
-              <Button variant="ghost" onClick={handleLogout}>
+              <Link href="#" className="hover:underline" onClick={logout}>
                 Logout
-              </Button>
+              </Link>
             </>
           ) : (
             <>

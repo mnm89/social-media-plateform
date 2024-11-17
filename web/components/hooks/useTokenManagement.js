@@ -13,7 +13,7 @@ const useTokenManagement = () => {
   );
   const [isPending, startTransition] = useTransition();
 
-  const isAuthenticated = () => !!accessToken && !isTokenExpired(accessToken);
+  const isAuthorized = () => !!accessToken && !isTokenExpired(accessToken);
 
   const setTokens = useCallback((tokens) => {
     const { access_token, refresh_token } = tokens;
@@ -31,7 +31,7 @@ const useTokenManagement = () => {
   };
 
   const refreshAccessToken = useCallback(() => {
-    if (!!refreshToken)
+    if (refreshToken)
       startTransition(async () => {
         try {
           const tokens = await refreshTokenAction(refreshToken);
@@ -52,7 +52,7 @@ const useTokenManagement = () => {
     return () => clearInterval(intervalId);
   }, [refreshAccessToken]);
 
-  return { isAuthenticated, isPending, clearTokens, accessToken, refreshToken };
+  return { isAuthorized, isPending, clearTokens, accessToken, refreshToken };
 };
 
 export default useTokenManagement;
