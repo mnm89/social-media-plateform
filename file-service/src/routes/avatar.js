@@ -125,34 +125,25 @@ router.get("/:userId", keycloak.protect("realm:service"), async (req, res) => {
   }
 });
 
-router.delete(
-  "/:storageId",
-  keycloak.protect("realm:user"),
-  async (req, res) => {
-    try {
-      const storage = await Storage.findOne({
-        where: {
-          id: req.params.storageId,
-          externalId: req.kauth.grant.access_token.content.sub,
-          entityType: "user",
-        },
-      });
+router.delete("/", keycloak.protect("realm:user"), async (req, res) => {
+  try {
+    const storage = await Storage.findOne({
+      where: {
+        externalId: req.kauth.grant.access_token.content.sub,
+        entityType: "user",
+      },
+    });
 
-      if (!storage)
-        return res.status(404).json({ message: "Storage not found" });
+    if (!storage) return res.status(404).json({ message: "Storage not found" });
 
-      await minioClient.removeObject(
-        storage.get("bucket"),
-        storage.get("path")
-      );
-      await storage.destroy();
+    await minioClient.removeObject(storage.get("bucket"), storage.get("path"));
+    await storage.destroy();
 
-      res.status(204).send(); // No content response
-    } catch (error) {
-      console.error("Error retrieving storage:", error);
-      res.status(500).json({ message: "Failed to retrieve storage media" });
-    }
+    res.status(204).send(); // No content response
+  } catch (error) {
+    console.error("Error deleting storage:", error);
+    res.status(500).json({ message: "Failed to delete avatar storage" });
   }
-);
+});
 
 module.exports = router;
