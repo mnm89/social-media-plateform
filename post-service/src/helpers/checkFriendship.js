@@ -5,7 +5,8 @@ const cache = require("../config/cache");
 async function isFriend(userId, friendId) {
   const [first, second] = [userId, friendId].sort();
   const key = `${first}|${second}`;
-  if (cache.get(key)) return JSON.parse(cache.get(key));
+  const cached = await cache.get(key);
+  if (cached) return JSON.parse(cached);
   try {
     const token = await getAccessToken();
     const response = await fetch(

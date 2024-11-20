@@ -7,7 +7,7 @@ async function getUserName(userId) {
 }
 
 async function getUser(userId) {
-  let user = cache.get(`user:${userId}`);
+  let user = await cache.get(`user:${userId}`);
   if (!user) {
     const token = await getAccessToken();
     const userResponse = await fetch(
@@ -20,10 +20,11 @@ async function getUser(userId) {
     );
     if (userResponse.ok) {
       const json = await userResponse.json();
-
       cache.set(`user:${userId}`, JSON.stringify(json)); // Cache the user details
+      return json;
     }
   }
+  console.log({ user });
   return JSON.parse(user);
 }
 

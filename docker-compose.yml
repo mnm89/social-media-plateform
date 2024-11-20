@@ -129,8 +129,8 @@ services:
   user-service:
     container_name: user-service
     build: ./user-service
-    ports:
-      - "3001:3000"
+    # ports:
+    #   - "3001:3000"
     environment:
       - DATABASE_URL=postgres://user_user:user_password@user-db/user_service
       - SESSION_SECRET=session_secret
@@ -140,17 +140,18 @@ services:
       - KEYCLOAK_CLIENT_SECRET=YXbgBO3JcrBOqfpzoMfQf2gPnfZrBTuw
       - KEYCLOAK_WEB_CLIENT_ID=web-client
       - FILE_SERVICE_URL=http://file-service:3000
+      - REDIS_URL=redis://redis:6379
     depends_on:
-      keycloak:
-        condition: service_healthy
       user-db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   post-service:
     container_name: post-service
     build: ./post-service
-    ports:
-      - "3002:3000"
+    # ports:
+    #   - "3002:3000"
     environment:
       - DATABASE_URL=postgres://post_user:post_password@post-db/post_service
       - SESSION_SECRET=session_secret
@@ -159,17 +160,19 @@ services:
       - KEYCLOAK_CLIENT_ID=post-management-service
       - KEYCLOAK_CLIENT_SECRET=wE1FPnBaMbd2GkcyyqQFO3s8Y7gfepk3
       - USER_SERVICE_URL=http://user-service:3000
+      - FILE_SERVICE_URL=http://file-service:3000
+      - REDIS_URL=redis://redis:6379
     depends_on:
       post-db:
         condition: service_healthy
-      user-service:
-        condition: service_started
+      redis:
+        condition: service_healthy
 
   file-service:
     container_name: file-service
     build: ./file-service
-    ports:
-      - "3003:3000"
+    # ports:
+    #   - "3003:3000"
     environment:
       - DATABASE_URL=postgres://file_user:file_password@file-db/file_service
       - KEYCLOAK_SERVER_URL=http://keycloak:8080
@@ -182,10 +185,13 @@ services:
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET_NAME=assets
+      - REDIS_URL=redis://redis:6379
     depends_on:
       file-db:
         condition: service_healthy
       minio:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   minio:
@@ -217,36 +223,34 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  notification-cache:
-    container_name: notification-cache
-    image: redis:latest
-    ports:
-      - "6380:6379" # Separate Redis instance for notification storage (if desired)
-
   redis:
     container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data # Mount a named volume to persist data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   notification-service:
     container_name: notification-service
     build: ./notification-service
-    ports:
-      - "3004:3000"
-    environment:
-      REDIS_HOST: notification-cache
+    # ports:
+    #   - "3004:3000"
     depends_on:
-      - notification-cache
+      - redis
       - rabbitmq
 
   recommendation-service:
     container_name: recommendation-service
     build: ./recommendation-service
-    ports:
-      - "3005:3000"
-    environment:
-      REDIS_HOST: redis
+    # ports:
+    #   - "3005:3000"
     depends_on:
       - redis
       - rabbitmq
@@ -256,4 +260,5 @@ volumes:
   post_data:
   file_data:
   minio_data:
+  redis_data:
   keycloak_data:

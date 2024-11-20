@@ -1,7 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const Comment = require("./comment");
 const { getUserAvatarUrl } = require("../helpers/userAvatar");
-const { getUserName } = require("../helpers/useName");
+const { getUserName } = require("../helpers/userName");
 
 class Post extends Model {
   static initModel(sequelize) {

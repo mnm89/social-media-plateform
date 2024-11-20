@@ -1,5 +1,5 @@
 const { getAccessToken } = require("./accessToken");
-const storageCache = require("../config/cache");
+const cache = require("../config/cache");
 
 async function getUserAvatarUrl(userId) {
   const storage = await getUserAvatarStorage(userId);
@@ -7,7 +7,7 @@ async function getUserAvatarUrl(userId) {
 }
 
 async function getUserAvatarStorage(userId) {
-  let storage = storageCache.get(`avatar:${userId}`);
+  let storage = await cache.get(`avatar:${userId}`);
   if (!storage) {
     const token = await getAccessToken();
     const storageResponse = await fetch(
@@ -22,7 +22,7 @@ async function getUserAvatarStorage(userId) {
     );
     if (storageResponse.ok) {
       const json = await storageResponse.json();
-      storageCache.set(`avatar:${userId}`, JSON.stringify(json)); // Cache the storage model
+      cache.set(`avatar:${userId}`, JSON.stringify(json)); // Cache the storage model
       return json;
     } else {
       console.error("Error retrieving user storage:", storageResponse.status);
