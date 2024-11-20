@@ -1,7 +1,7 @@
 const express = require("express");
 const keycloak = require("../config/keycloak");
 const { getKeycloakUser } = require("../helpers/keycloakUser");
-const { getUserAvatar } = require("../helpers/storageUser");
+const { getUserAvatarUrl } = require("../helpers/storageUser");
 
 const router = express.Router();
 router.use(keycloak.protect("realm:service"));
@@ -17,7 +17,7 @@ router.get("/:id", async (req, res) => {
 
   const { username, email } = user;
 
-  const avatar = await getUserAvatar(id);
+  const avatar = await getUserAvatarUrl(id);
 
   const response = {
     id,

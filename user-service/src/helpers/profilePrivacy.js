@@ -2,7 +2,7 @@ const { getAccessToken } = require("./accessToken");
 const { Privacy } = require("../models");
 const { isFriends, isFriendshipRequested } = require("./isFriends");
 const { attributes, groups, defaultPrivacy } = require("../config/profile");
-const { getUserAvatar } = require("./storageUser");
+const { getUserAvatarUrl } = require("./storageUser");
 
 async function ensurePrivacySettings(userId) {
   const promises = defaultPrivacy.map(async ({ attribute, visibility }) => {
@@ -50,7 +50,7 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
     : false;
   const isSameUser = user.id === requesterId;
 
-  const avatar = await getUserAvatar(user.id);
+  const avatar = await getUserAvatarUrl(user.id);
 
   const userProfile = attributes.reduce(
     (p, c) => {

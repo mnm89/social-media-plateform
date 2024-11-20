@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const { getUserName } = require("../helpers/keycloakUser");
-const { getUserAvatar } = require("../helpers/storageUser");
+const { getUserAvatarUrl } = require("../helpers/storageUser");
 
 class Friendship extends Model {
   static initModel(sequelize) {
@@ -51,7 +51,7 @@ class Friendship extends Model {
           );
           friendship.setDataValue(
             "friendAvatar",
-            await getUserAvatar(friendship.friendId)
+            await getUserAvatarUrl(friendship.friendId)
           );
           friendship.setDataValue(
             "senderName",
@@ -59,7 +59,7 @@ class Friendship extends Model {
           );
           friendship.setDataValue(
             "senderAvatar",
-            await getUserAvatar(friendship.userId)
+            await getUserAvatarUrl(friendship.userId)
           );
         })
       );

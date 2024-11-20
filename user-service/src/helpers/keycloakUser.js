@@ -1,13 +1,12 @@
-const NodeCache = require("node-cache");
 const { getAccessToken } = require("./accessToken");
-const userCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
+const userCache = require("../config/cache");
 async function getUserName(userId) {
   const user = await getKeycloakUser(userId);
   return user?.username;
 }
 
 async function getKeycloakUser(userId) {
-  let user = userCache.get(userId);
+  let user = userCache.get(`user:${userId}`);
   if (!user) {
     const token = await getAccessToken();
     const userResponse = await fetch(
@@ -21,14 +20,14 @@ async function getKeycloakUser(userId) {
       }
     );
     if (userResponse.ok) {
-      user = await userResponse.json();
-
-      userCache.set(userId, user); // Cache the user details
+      const json = await userResponse.json();
+      userCache.set(`user:${userId}`, JSON.stringify(json)); // Cache the user details
+      return json;
     } else {
       console.error("Error retrieving user account:", userResponse.status);
     }
   }
-  return user;
+  return JSON.parse(user);
 }
 
 module.exports = { getKeycloakUser, getUserName };
