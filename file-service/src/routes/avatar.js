@@ -4,6 +4,10 @@ const keycloak = require("../config/keycloak");
 const { Storage } = require("../models");
 const path = require("path");
 /**
+ * @type {import('ioredis').Redis}
+ */
+const cache = require("../config/cache");
+/**
  * @type {import('minio').Client}
  */
 const minioClient = require("../config/minio");
@@ -67,7 +71,10 @@ router.post("/", keycloak.protect("realm:user"), async (req, res) => {
       );
 
       const url = `${signedUrl.origin}${signedUrl.pathname}`;
-      res.status(201).json({ ...storage.dataValues, url });
+
+      const avatar = { ...storage.dataValues, url };
+      await cache.set(`avatar:${userId}`, JSON.stringify(avatar));
+      res.status(201).json(avatar);
     } catch (error) {
       console.error("Error during upload process:", error);
       res.status(500).json({ error: "Failed to upload file." });
@@ -138,7 +145,7 @@ router.delete("/", keycloak.protect("realm:user"), async (req, res) => {
 
     await minioClient.removeObject(storage.get("bucket"), storage.get("path"));
     await storage.destroy();
-
+    await cache.del(`avatar:${req.kauth.grant.access_token.content.sub}`);
     res.status(204).send(); // No content response
   } catch (error) {
     console.error("Error deleting storage:", error);
