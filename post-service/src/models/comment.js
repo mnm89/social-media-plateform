@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
-const { getAuthorName, getAuthorAvatar } = require("../helpers/userData");
+const { getUserAvatarUrl } = require("../helpers/userAvatar");
+const { getUserName } = require("../helpers/useName");
 
 class Comment extends Model {
   static initModel(sequelize) {
@@ -45,13 +46,10 @@ class Comment extends Model {
       await Promise.all(
         commentsArray.map(async (comment) => {
           // Set author fields on the comment instance
-          comment.setDataValue(
-            "authorName",
-            await getAuthorName(comment.userId)
-          );
+          comment.setDataValue("authorName", await getUserName(comment.userId));
           comment.setDataValue(
             "authorAvatar",
-            await getAuthorAvatar(comment.userId)
+            await getUserAvatarUrl(comment.userId)
           );
 
           if (comment.replies && comment.replies.length > 0) {

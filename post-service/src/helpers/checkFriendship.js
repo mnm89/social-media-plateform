@@ -1,13 +1,11 @@
 const { getAccessToken } = require("./accessToken");
-const NodeCache = require("node-cache");
-
-const userCache = new NodeCache({ stdTTL: 300, checkperiod: 320 }); // Cache for 5 minutes
+const cache = require("../config/cache");
 
 // Check if the user is friends with the specified friendId
 async function isFriend(userId, friendId) {
   const [first, second] = [userId, friendId].sort();
   const key = `${first}|${second}`;
-  if (userCache.has(key)) return userCache.get(key);
+  if (cache.get(key)) return JSON.parse(cache.get(key));
   try {
     const token = await getAccessToken();
     const response = await fetch(
@@ -26,7 +24,7 @@ async function isFriend(userId, friendId) {
     }
 
     const { isFriend } = await response.json();
-    userCache.set(key, isFriend);
+    cache.set(key, JSON.stringify(isFriend));
     return isFriend;
   } catch (error) {
     console.error("Error checking friendship status:", error);
