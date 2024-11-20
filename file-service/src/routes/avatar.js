@@ -116,6 +116,9 @@ router.get("/:userId", keycloak.protect("realm:service"), async (req, res) => {
         entityType: "user",
       },
     });
+
+    if (!avatar) return res.status(404).json({ message: "Avatar not found" });
+
     const signedUrl = new URL(
       await minioClient.presignedUrl(
         "GET",
