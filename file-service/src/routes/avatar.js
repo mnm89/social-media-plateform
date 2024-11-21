@@ -12,7 +12,10 @@ const cache = require("../config/cache");
  */
 const minioClient = require("../config/minio");
 const { getFileTypeFromMimeType } = require("../helpers/fileType");
-const { uploadFileToMinio } = require("../helpers/minioObjects");
+const {
+  uploadFileToMinio,
+  deleteFileFromMinio,
+} = require("../helpers/minioObjects");
 
 const router = express.Router();
 
@@ -35,12 +38,15 @@ router.post(
         },
       });
 
-      if (!storage)
+      if (!storage) {
         storage = new Storage({
           entityType: "user",
           externalId: userId,
           bucket: "avatars",
         });
+      } else {
+        await deleteFileFromMinio(storage);
+      }
 
       storage.set("type", getFileTypeFromMimeType(file.mimetype));
       storage.set(
@@ -48,14 +54,8 @@ router.post(
         `${storage.get("id")}${path.extname(file.originalname)}`
       );
 
-      await uploadFileToMinio(
-        file.path,
-        storage,
-        minioClient,
-        userId,
-        file.originalname,
-        file.mimetype
-      );
+      const uploaded = await uploadFileToMinio(file, storage, userId);
+      if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
 
       await storage.save();
 
@@ -68,7 +68,6 @@ router.post(
       );
 
       const url = `${signedUrl.origin}${signedUrl.pathname}`;
-
       const avatar = { ...storage.dataValues, url };
       await cache.set(`avatar:${userId}`, JSON.stringify(avatar));
       res.status(201).json(avatar);
