@@ -12,19 +12,20 @@ const cache = require("../config/cache");
  */
 const minioClient = require("../config/minio");
 const { getFileTypeFromMimeType } = require("../helpers/fileType");
+const { uploadFileToMinio } = require("../helpers/minioObjects");
+
 const router = express.Router();
 
-const upload = multer({ storage: multer.memoryStorage() }).single("file");
+const upload = multer({ dest: "uploads/" });
 
-router.post("/", keycloak.protect("realm:user"), async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-
+router.post(
+  "/",
+  keycloak.protect("realm:user"),
+  upload.single("file"),
+  async (req, res) => {
     const file = req.file;
     if (!file) return res.status(400).json({ error: "No file provided." });
-
     const userId = req.kauth.grant.access_token.content.sub;
-
     try {
       let storage = await Storage.findOne({
         where: {
@@ -47,17 +48,13 @@ router.post("/", keycloak.protect("realm:user"), async (req, res) => {
         `${storage.get("id")}${path.extname(file.originalname)}`
       );
 
-      await minioClient.putObject(
-        storage.get("bucket"),
-        storage.get("path"),
-        file.buffer,
-        file.size,
-        {
-          storageId: storage.get("id"),
-          userId,
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-        }
+      await uploadFileToMinio(
+        file.path,
+        storage,
+        minioClient,
+        userId,
+        file.originalname,
+        file.mimetype
       );
 
       await storage.save();
@@ -79,8 +76,8 @@ router.post("/", keycloak.protect("realm:user"), async (req, res) => {
       console.error("Error during upload process:", error);
       res.status(500).json({ error: "Failed to upload file." });
     }
-  });
-});
+  }
+);
 
 router.get("/", keycloak.protect("realm:user"), async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
