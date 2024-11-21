@@ -7,6 +7,10 @@ const path = require("path");
  */
 const minioClient = require("../config/minio");
 const { getFileTypeFromMimeType } = require("../helpers/fileType");
+const {
+  uploadFileToMinio,
+  deleteFileFromMinio,
+} = require("../helpers/minioObjects");
 
 const router = express.Router();
 
@@ -40,17 +44,8 @@ router.post("/upload", async (req, res) => {
         externalId ? `${externalId}/${fileName}` : `${fileName}`
       );
 
-      await minioClient.putObject(
-        storage.get("bucket"),
-        storage.get("path"),
-        file.buffer,
-        file.size,
-        {
-          storageId: storage.get("id"),
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-        }
-      );
+      const uploaded = await uploadFileToMinio(file, storage);
+      if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
       await storage.save();
       res.status(201).json(storage);
     } catch (error) {
@@ -96,7 +91,10 @@ router.delete("/:id", async (req, res) => {
     if (!storage) {
       return res.status(404).json({ message: "Storage not found." });
     }
-    await minioClient.removeObject(storage.get("bucket"), storage.get("path"));
+
+    const deleted = await deleteFileFromMinio(storage);
+    if (!deleted)
+      return res.status(500).json({ message: "Failed to delete file" });
     await storage.destroy();
 
     res.status(204).send(); // No content response

@@ -54,7 +54,9 @@ router.post(
         `${storage.get("id")}${path.extname(file.originalname)}`
       );
 
-      const uploaded = await uploadFileToMinio(file, storage, userId);
+      const uploaded = await uploadFileToMinio(file, storage, {
+        "x-amz-meta-userId": userId,
+      });
       if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
 
       await storage.save();
@@ -142,7 +144,9 @@ router.delete("/", keycloak.protect("realm:user"), async (req, res) => {
 
     if (!storage) return res.status(404).json({ message: "Storage not found" });
 
-    await minioClient.removeObject(storage.get("bucket"), storage.get("path"));
+    const deleted = await deleteFileFromMinio(storage);
+    if (!deleted)
+      return res.status(500).json({ message: "Failed to delete avatar file" });
     await storage.destroy();
     await cache.del(`avatar:${req.kauth.grant.access_token.content.sub}`);
     res.status(204).send(); // No content response

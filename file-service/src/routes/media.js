@@ -8,14 +8,19 @@ const path = require("path");
  */
 const minioClient = require("../config/minio");
 const { getFileTypeFromMimeType } = require("../helpers/fileType");
+const {
+  uploadFileToMinio,
+  deleteFileFromMinio,
+} = require("../helpers/minioObjects");
 
 const router = express.Router();
+const upload = multer({ dest: "uploads/" });
 
-const upload = multer({ storage: multer.memoryStorage() }).single("file");
-
-router.post("/:postId", keycloak.protect("realm:user"), async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+router.post(
+  "/:postId",
+  keycloak.protect("realm:user"),
+  upload.single("file"),
+  async (req, res) => {
     const file = req.file;
     if (!file) return res.status(400).json({ error: "No file provided." });
 
@@ -29,18 +34,10 @@ router.post("/:postId", keycloak.protect("realm:user"), async (req, res) => {
       const fileName = `${storage.get("id")}${path.extname(file.originalname)}`;
       storage.set("path", `${req.params.postId}/${fileName}`);
 
-      await minioClient.putObject(
-        storage.get("bucket"),
-        storage.get("path"),
-        file.buffer,
-        file.size,
-        {
-          storageId: storage.get("id"),
-          postId: req.params.postId,
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-        }
-      );
+      const uploaded = await uploadFileToMinio(file, storage, {
+        "x-amz-meta-postId": req.params.postId,
+      });
+      if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
 
       await storage.save();
       res.status(201).json(storage);
@@ -48,8 +45,8 @@ router.post("/:postId", keycloak.protect("realm:user"), async (req, res) => {
       console.error("Error during upload process:", error);
       res.status(500).json({ error: "Failed to upload file." });
     }
-  });
-});
+  }
+);
 
 router.get(
   "/:postId",
@@ -99,16 +96,16 @@ router.delete(
       if (!storage)
         return res.status(404).json({ message: "Storage not found" });
 
-      await minioClient.removeObject(
-        storage.get("bucket"),
-        storage.get("path")
-      );
+      const deleted = await deleteFileFromMinio(storage);
+      if (!deleted)
+        return res.status(500).json({ message: "Failed to delete media file" });
+
       await storage.destroy();
 
       res.status(204).send(); // No content response
     } catch (error) {
-      console.error("Error retrieving storage:", error);
-      res.status(500).json({ message: "Failed to retrieve storage media" });
+      console.error("Error destroying storage:", error);
+      res.status(500).json({ message: "Failed to delete storage" });
     }
   }
 );

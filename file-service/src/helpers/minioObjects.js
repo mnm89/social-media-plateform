@@ -8,10 +8,10 @@ const minioClient = require("../config/minio");
  *
  * @param {Express.Multer.File} file
  * @param {import("../models").Storage} storage
- * @param {string} userId
+ * @param {Record<string,string>} meta
  * @returns {Promise<boolean>}
  */
-const uploadFileToMinio = async (file, storage, userId) => {
+const uploadFileToMinio = async (file, storage, meta = {}) => {
   try {
     await minioClient.fPutObject(
       storage.get("bucket"),
@@ -20,8 +20,8 @@ const uploadFileToMinio = async (file, storage, userId) => {
       {
         "Content-Type": file.mimetype,
         "x-amz-meta-storageId": storage.get("id"),
-        "x-amz-meta-userId": userId,
         "x-amz-meta-originalName": file.originalname,
+        ...meta,
       }
     );
 
