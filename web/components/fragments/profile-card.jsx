@@ -20,7 +20,7 @@ export default function ProfileCard({ profile }) {
     isFriend,
     id,
   } = profile;
-  const { isAuthenticated } = useAuth();
+  const { currentUser } = useAuth();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -66,13 +66,13 @@ export default function ProfileCard({ profile }) {
       </Card>
 
       <div className="justify-end flex">
-        {isAuthenticated() && !isFriendshipExists && (
+        {currentUser && !isFriendshipExists && (
           <Button disabled={isPending} onClick={requestFriendship}>
             {isPending ? "Sending request ..." : "Request friendship"}
           </Button>
         )}
 
-        {isAuthenticated() && isFriend && (
+        {currentUser && isFriend && (
           <Button variant="outline" disabled>
             A Friend
           </Button>

@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/unauthorized";
 import PrivacyCard from "@/components/fragments/privacy-card";
-import { isTokenExpired, parseToken } from "@/lib/token";
-import { getCurrentProfile, getPublicProfile } from "@/lib/api";
+import { isTokenExpired } from "@/lib/token";
+import { getCurrentProfile } from "@/lib/api";
+import AvatarForm from "@/components/forms/avatar-form";
 
 export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
@@ -26,14 +27,15 @@ export default async function Page() {
   }
 
   const { profile, privacy } = await getCurrentProfile(token);
-  // Render protected content
 
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-semibold mb-6">Account Settings</h1>
 
+      <AvatarForm currentAvatarUrl={profile.avatar} />
+
       {/* Profile Information Section */}
-      <Card className="mb-6">
+      {/*     <Card className="mb-6">
         <CardHeader>
           <h2 className="text-xl font-medium">Public Identity</h2>
           <p className="text-sm text-gray-500">
@@ -49,15 +51,6 @@ export default async function Page() {
                 type="text"
                 placeholder="Your Name"
                 value={profile.username}
-              />
-            </div>
-            <div>
-              <Label htmlFor="name">Avatar url</Label>
-              <Input
-                id="avatar"
-                type="text"
-                placeholder="Your Name"
-                value={profile.avatar}
               />
             </div>
           </div>
@@ -76,7 +69,7 @@ export default async function Page() {
             Save Changes
           </Button>
         </CardFooter>
-      </Card>
+      </Card> */}
 
       {/* Profile Privacy Section */}
       <PrivacyCard profile={profile} privacy={privacy} />
