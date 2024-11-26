@@ -7,6 +7,11 @@ const { getKeycloakUser } = require("../helpers/keycloakUser");
 const keycloak = require("../config/keycloak");
 const authenticate = require("../middleware/authenticate");
 const { getAccessToken } = require("../helpers/accessToken");
+const { Privacy } = require("../models");
+/**
+ * @type {import('ioredis').Redis}
+ */
+const cache = require("../config/cache");
 
 const router = express.Router();
 
@@ -30,16 +35,35 @@ router.get("/", keycloak.protect("realm:user"), async (req, res) => {
   res.json({ profile, privacy });
 });
 
-router.put("/", keycloak.protect("realm:user"), async (req, res) => {
+router.put("/privacy", keycloak.protect("realm:user"), async (req, res) => {
   const userId = req.kauth.grant.access_token.content.sub;
-  const patch = req.body;
+  const { profile, privacy } = req.body;
+  let user = await getKeycloakUser(userId);
+  const promises = Object.entries(privacy).map(([attribute, visibility]) =>
+    Privacy.update(
+      { visibility },
+      {
+        where: {
+          userId,
+          attribute,
+        },
+      }
+    )
+  );
+
+  await Promise.all(promises);
 
   const payload = {
-    attributes: Object.keys(patch).reduce((p, c) => {
-      p[c] = [patch[c]];
+    email: user.email,
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    attributes: Object.keys(profile).reduce((p, c) => {
+      p[c] = [profile[c]];
+      return p;
     }, {}),
   };
-  console.log({ payload });
+
   const token = await getAccessToken();
   const response = await fetch(
     `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`,
@@ -57,10 +81,11 @@ router.put("/", keycloak.protect("realm:user"), async (req, res) => {
 
     return res.status(500).json({ message: "Error patching user profile" });
   }
+  await cache.del(`user:${userId}`);
+  user = await getKeycloakUser(userId);
+  const profilePrivacy = await buildUserProfileWithPrivacy(user, userId);
 
-  const user = await getKeycloakUser(userId);
-  const { profile, privacy } = await buildUserProfileWithPrivacy(user, userId);
-  res.json({ profile, privacy });
+  res.json(profilePrivacy);
 });
 
 module.exports = router;

@@ -127,8 +127,6 @@ const groups = [
 ];
 
 const defaultPrivacy = [
-  { attribute: "firstName", visibility: "public" },
-  { attribute: "lastName", visibility: "public" },
   { attribute: "phone", visibility: "private" },
   { attribute: "address", visibility: "friends-only" },
   { attribute: "bio", visibility: "public" },

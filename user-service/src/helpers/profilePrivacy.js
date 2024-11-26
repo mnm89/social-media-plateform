@@ -52,13 +52,10 @@ async function buildUserProfileWithPrivacy(user, requesterId) {
 
   const avatar = await getUserAvatarUrl(user.id);
 
-  const userProfile = attributes.reduce(
+  const userProfile = defaultPrivacy.reduce(
     (p, c) => {
-      if (user.attributes && user.attributes[c.name])
-        p[c.name] = user.attributes[c.name][0];
-
-      if (user[c.name]) p[c.name] = user[c.name];
-
+      if (user.attributes && user.attributes[c.attribute])
+        p[c.attribute] = user.attributes[c.attribute][0];
       return p;
     },
     { id: user.id, avatar, isFriend, isFriendshipExists }
