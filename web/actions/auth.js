@@ -62,3 +62,8 @@ export async function registerAction(firstName, lastName, email, password) {
 
   throw await handleNonOkResponse(response);
 }
+
+export async function logoutAction() {
+  (await cookies()).delete("refresh_token");
+  (await cookies()).delete("access_token");
+}

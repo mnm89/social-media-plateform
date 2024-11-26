@@ -8,5 +8,5 @@ export function isTokenExpired(token) {
 export function parseToken(token) {
   if (token)
     return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
-  return {};
+  return null;
 }
