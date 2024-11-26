@@ -86,3 +86,25 @@ export async function UpdatePublicIdentity(identity) {
 
   throw await handleNonOkResponse(response);
 }
+
+export async function ChangePassword({ currentPassword, newPassword }) {
+  const accessToken = (await cookies()).get("access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+  const response = await fetch(
+    `${process.env.API_GATEWAY_URL}/profiles/password`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + accessToken,
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }
+  );
+  if (response.ok) return response.json();
+
+  throw await handleNonOkResponse(response);
+}

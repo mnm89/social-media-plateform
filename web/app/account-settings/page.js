@@ -1,12 +1,5 @@
 import { cookies } from "next/headers";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/unauthorized";
@@ -15,6 +8,7 @@ import { isTokenExpired } from "@/lib/token";
 import { getCurrentProfile } from "@/lib/api";
 import AvatarForm from "@/components/forms/avatar-form";
 import PublicIdentityForm from "@/components/forms/public-identity-form";
+import PasswordForm from "@/components/forms/password-form";
 
 export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
@@ -50,38 +44,7 @@ export default async function Page() {
       />
 
       {/* Password Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <h2 className="text-xl font-medium">Change Password</h2>
-          <p className="text-sm text-gray-500">Update your password</p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
-            <div>
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input
-                id="currentPassword"
-                type="password"
-                placeholder="Current Password"
-              />
-            </div>
-            <div>
-              <Label htmlFor="newPassword">New Password</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                placeholder="New Password"
-              />
-            </div>
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-end">
-          <Button className="mt-4" variant="primary">
-            Update Password
-          </Button>
-        </CardFooter>
-      </Card>
+      <PasswordForm />
 
       {/* Notification Preferences Section */}
       <Card className="mb-6">
