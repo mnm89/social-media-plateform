@@ -83,9 +83,43 @@ router.put("/privacy", keycloak.protect("realm:user"), async (req, res) => {
   }
   await cache.del(`user:${userId}`);
   user = await getKeycloakUser(userId);
-  const profilePrivacy = await buildUserProfileWithPrivacy(user, userId);
+  res.json(user);
+});
 
-  res.json(profilePrivacy);
+router.put("/identity", keycloak.protect("realm:user"), async (req, res) => {
+  const userId = req.kauth.grant.access_token.content.sub;
+  const { firstName, lastName, email, username } = req.body;
+  let user = await getKeycloakUser(userId);
+
+  const payload = {
+    email,
+    username,
+    firstName,
+    lastName,
+    attributes: user.attributes,
+  };
+  console.log({ payload });
+
+  const token = await getAccessToken();
+  const response = await fetch(
+    `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+  if (!response.ok) {
+    console.error("Error patching user identity:", response.status);
+
+    return res.status(500).json({ message: "Error patching user identity" });
+  }
+  await cache.del(`user:${userId}`);
+  user = await getKeycloakUser(userId);
+  res.json(user);
 });
 
 module.exports = router;
