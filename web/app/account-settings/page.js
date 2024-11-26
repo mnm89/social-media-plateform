@@ -14,6 +14,7 @@ import ProfilePrivacyForm from "@/components/forms/profile-privacy-form";
 import { isTokenExpired } from "@/lib/token";
 import { getCurrentProfile } from "@/lib/api";
 import AvatarForm from "@/components/forms/avatar-form";
+import PublicIdentityForm from "@/components/forms/public-identity-form";
 
 export default async function Page() {
   const token = (await cookies()).get("access_token")?.value;
@@ -34,8 +35,8 @@ export default async function Page() {
 
       <AvatarForm currentAvatarUrl={profile.avatar} />
 
-      {/* Profile Information Section */}
-      {/*      */}
+      {/* Public Identity Section */}
+      <PublicIdentityForm />
 
       {/* Profile Privacy Section */}
       <ProfilePrivacyForm
