@@ -56,15 +56,17 @@ export default function PasswordForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <input
-          type="text"
-          autoComplete="username"
-          name="username"
-          value={currentUser?.preferred_username}
-          readOnly
-          aria-hidden="true"
-          className="hidden"
-        />
+        {currentUser && (
+          <input
+            type="text"
+            autoComplete="username"
+            name="username"
+            value={currentUser.preferred_username}
+            readOnly
+            aria-hidden="true"
+            className="hidden"
+          />
+        )}
         <Card className="mb-6">
           <CardHeader>
             <h2 className="text-xl font-medium">Change Password</h2>
