@@ -5,6 +5,10 @@
     "resetPasswordAllowed": true,
     "revokeRefreshToken": true,
     "refreshTokenMaxReuse": 0,
+    "editUsernameAllowed": true,
+    "verifyEmail": false,
+    "loginWithEmailAllowed": true,
+    "duplicateEmailsAllowed": false,
     "clients": [
         {
             "clientId": "web-client",
