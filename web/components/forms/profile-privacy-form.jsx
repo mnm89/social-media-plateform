@@ -10,12 +10,39 @@ import { Label } from "@/components/ui/label";
 import { ToggleGroupItem, ToggleGroup } from "@/components/ui/toggle-group";
 import dynamic from "next/dynamic";
 import { Button } from "../ui/button";
+import { useState, useTransition } from "react";
+import { UpdateProfilePrivacy } from "@/actions/profile";
+import { useRouter } from "next/navigation";
 
 // Dynamically import the Markdown editor to avoid SSR issues
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-export default function PrivacyCard({ profile, privacy }) {
-  const { firstName, lastName, bio, address, phone } = profile;
+export default function ProfilePrivacyForm({ profile, privacy }) {
+  const [profileState, setProfileState] = useState(profile);
+  const [privacyState, setPrivacyState] = useState(
+    privacy.reduce((p, c) => {
+      p[c.attribute] = c.visibility;
+      return p;
+    }, {})
+  );
+  const [isPending, startTransaction] = useTransition();
+  const router = useRouter();
+  const { bio, address, phone } = profileState;
+  console.log({ privacyState, profileState });
+
+  const saveChanges = () => {
+    startTransaction(async () => {
+      try {
+        await UpdateProfilePrivacy(profileState, privacyState);
+        router.refresh();
+      } catch (error) {
+        console.error("Error updating profile", error);
+        //toast error
+      }
+    });
+    console.log({ profileState, privacyState });
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -27,70 +54,12 @@ export default function PrivacyCard({ profile, privacy }) {
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <Label className="text-md font-semibold">Given Name</Label>
-            <Input
-              value={firstName}
-              onChange={(e) => {}}
-              placeholder={`Enter your given name`}
-            />
-          </div>
-          <div className="items-end justify-center h-full flex">
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              defaultValue={
-                privacy.find((p) => p.attribute === "firstName")?.visibility
-              }
-            >
-              {["public", "private", "friends-only"].map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  aria-label={option}
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label className="text-md font-semibold">Family Name</Label>
-            <Input
-              value={firstName}
-              onChange={(e) => {}}
-              placeholder={`Enter your family name`}
-            />
-          </div>
-          <div className="items-end justify-center h-full flex">
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              defaultValue={
-                privacy.find((p) => p.attribute === "lastName")?.visibility
-              }
-            >
-              {["public", "private", "friends-only"].map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  aria-label={option}
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <div>
             <Label className="text-md font-semibold">Phone</Label>
             <Input
-              value={firstName}
-              onChange={(e) => {}}
+              value={phone}
+              onChange={(e) =>
+                setProfileState({ ...profileState, phone: e.target.value })
+              }
               placeholder={`Enter your phone number`}
             />
           </div>
@@ -98,9 +67,10 @@ export default function PrivacyCard({ profile, privacy }) {
             <ToggleGroup
               type="single"
               variant="outline"
-              defaultValue={
-                privacy.find((p) => p.attribute === "phone")?.visibility
+              onValueChange={(v) =>
+                setPrivacyState({ ...privacyState, phone: v })
               }
+              value={privacyState.phone}
             >
               {["public", "private", "friends-only"].map((option) => (
                 <ToggleGroupItem
@@ -119,8 +89,10 @@ export default function PrivacyCard({ profile, privacy }) {
           <div>
             <Label className="text-md font-semibold">Location</Label>
             <Input
-              value={firstName}
-              onChange={(e) => {}}
+              value={address}
+              onChange={(e) =>
+                setProfileState({ ...profileState, address: e.target.value })
+              }
               placeholder={`Enter your location`}
             />
           </div>
@@ -128,9 +100,10 @@ export default function PrivacyCard({ profile, privacy }) {
             <ToggleGroup
               type="single"
               variant="outline"
-              defaultValue={
-                privacy.find((p) => p.attribute === "address")?.visibility
+              onValueChange={(v) =>
+                setPrivacyState({ ...privacyState, address: v })
               }
+              value={privacyState.address}
             >
               {["public", "private", "friends-only"].map((option) => (
                 <ToggleGroupItem
@@ -150,7 +123,7 @@ export default function PrivacyCard({ profile, privacy }) {
             <Label className="text-md font-semibold">Bio</Label>
             <MDEditor
               value={bio}
-              onChange={() => {}}
+              onChange={(c) => setProfileState({ ...profileState, bio: c })}
               height={400}
               placeholder="Write your bio in Markdown..."
             />
@@ -159,9 +132,10 @@ export default function PrivacyCard({ profile, privacy }) {
             <ToggleGroup
               type="single"
               variant="outline"
-              defaultValue={
-                privacy.find((p) => p.attribute === "bio")?.visibility
+              onValueChange={(v) =>
+                setPrivacyState({ ...privacyState, bio: v })
               }
+              value={privacyState.bio}
             >
               {["public", "private", "friends-only"].map((option) => (
                 <ToggleGroupItem
@@ -177,8 +151,13 @@ export default function PrivacyCard({ profile, privacy }) {
         </div>
       </CardContent>
       <CardFooter className="justify-end">
-        <Button className="mt-4" variant="primary">
-          Save Changes
+        <Button
+          className="mt-4"
+          variant="primary"
+          onClick={saveChanges}
+          disabled={isPending}
+        >
+          {isPending ? "Saving changes ..." : "Save Changes"}
         </Button>
       </CardFooter>
     </Card>

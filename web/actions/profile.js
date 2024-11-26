@@ -20,20 +20,6 @@ export async function UpdateAvatar(file) {
   });
 
   if (response.ok) return response.json();
-  /*   if (response.ok) {
-    const { url } = await response.json();
-
-    response = await fetch(`${process.env.API_GATEWAY_URL}/profiles`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      },
-      body: JSON.stringify({ avatar: url }),
-    });
-
-    if (response.ok) return response.json();
-  } */
 
   throw await handleNonOkResponse(response);
 }
@@ -53,6 +39,28 @@ export async function DeleteAvatar() {
   });
 
   if (response.ok) return true;
+
+  throw await handleNonOkResponse(response);
+}
+
+export async function UpdateProfilePrivacy(profile, privacy) {
+  const accessToken = (await cookies()).get("access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+  const response = await fetch(
+    `${process.env.API_GATEWAY_URL}/profiles/privacy`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + accessToken,
+      },
+      body: JSON.stringify({ profile, privacy }),
+    }
+  );
+  if (response.ok) return response.json();
 
   throw await handleNonOkResponse(response);
 }

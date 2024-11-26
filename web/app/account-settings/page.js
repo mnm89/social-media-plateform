@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { UnauthorizedCard } from "@/components/unauthorized";
-import PrivacyCard from "@/components/fragments/privacy-card";
+import ProfilePrivacyForm from "@/components/forms/profile-privacy-form";
 import { isTokenExpired } from "@/lib/token";
 import { getCurrentProfile } from "@/lib/api";
 import AvatarForm from "@/components/forms/avatar-form";
@@ -35,44 +35,18 @@ export default async function Page() {
       <AvatarForm currentAvatarUrl={profile.avatar} />
 
       {/* Profile Information Section */}
-      {/*     <Card className="mb-6">
-        <CardHeader>
-          <h2 className="text-xl font-medium">Public Identity</h2>
-          <p className="text-sm text-gray-500">
-            These information can be accessed publicly
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-2">
-            <div>
-              <Label htmlFor="name">Username / Author name</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Your Name"
-                value={profile.username}
-              />
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={profile.email}
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="justify-end">
-          <Button className="mt-4" variant="primary">
-            Save Changes
-          </Button>
-        </CardFooter>
-      </Card> */}
+      {/*      */}
 
       {/* Profile Privacy Section */}
-      <PrivacyCard profile={profile} privacy={privacy} />
+      <ProfilePrivacyForm
+        profile={privacy
+          .map((p) => p.attribute)
+          .reduce((p, c) => {
+            p[c] = profile[c] ?? "";
+            return p;
+          }, {})}
+        privacy={privacy}
+      />
 
       {/* Password Section */}
       <Card className="mb-6">

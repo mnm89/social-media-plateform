@@ -1,6 +1,4 @@
 import { cookies } from "next/headers";
-import { isTokenExpired } from "@/lib/token";
-import { UnauthorizedCard } from "@/components/unauthorized";
 import { getPublicProfile } from "@/lib/api";
 import ProfileCard from "@/components/fragments/profile-card";
 
