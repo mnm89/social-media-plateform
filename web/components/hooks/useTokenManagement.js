@@ -39,6 +39,7 @@ const useTokenManagement = () => {
         } catch (error) {
           console.error("Failed to refresh access token:", error);
           clearTokens();
+          window.location.reload();
         }
       });
   }, [refreshToken, setTokens]);
