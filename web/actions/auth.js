@@ -41,7 +41,13 @@ export async function loginAction(username, password) {
 
   throw await handleNonOkResponse(response);
 }
-export async function registerAction(firstName, lastName, email, password) {
+export async function registerAction({
+  firstName,
+  lastName,
+  email,
+  password,
+  username,
+}) {
   const response = await fetch(`${process.env.API_GATEWAY_URL}/register`, {
     method: "POST",
     headers: {
@@ -51,6 +57,7 @@ export async function registerAction(firstName, lastName, email, password) {
       firstName,
       lastName,
       email,
+      username,
       password,
     }),
   });

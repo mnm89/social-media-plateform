@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Endpoint for user registration
 router.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, username } = req.body;
 
   try {
     // Step 1: Obtain an admin access token for the service account
@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          username: email,
+          username,
           email,
           firstName,
           lastName,
@@ -28,12 +28,111 @@ router.post("/register", async (req, res) => {
           credentials: [
             { type: "password", value: password, temporary: false },
           ],
+          //TODO: CHECK THIS
+          emailVerified: "true",
         }),
       }
     );
 
     if (!createUserResponse.ok) {
       console.error("Error creating user account:", createUserResponse.status);
+      return res.status(500).json({ message: "Failed to create user" });
+    }
+
+    // The response will not contain a body, but the 'Location' header will have the user ID
+    const locationHeader = createUserResponse.headers.get("Location");
+    const userId = locationHeader.split("/").pop(); // Extract the UUID from the URL
+
+    // Step 3: Get the default realm role id
+    const roleResponse = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/roles/default-roles-${process.env.KEYCLOAK_REALM}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!roleResponse.ok) {
+      console.error(
+        "Error creating user account - getting default realm role:",
+        roleResponse.status
+      );
+      return res.status(500).json({ message: "Failed to create user" });
+    }
+
+    const { id: roleId } = await roleResponse.json();
+
+    // Step 4: Revoke the "default-roles-{realm-name}" role from the user
+    const revokeResponse = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}/role-mappings/realm`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify([
+          {
+            id: roleId,
+            name: `default-roles-${process.env.KEYCLOAK_REALM}`,
+          },
+        ]),
+      }
+    );
+    if (!revokeResponse.ok) {
+      console.error(
+        "Error creating user account - revoking default realm role " +
+          roleId +
+          " for user: " +
+          userId,
+        revokeResponse.status
+      );
+      return res.status(500).json({ message: "Failed to create user" });
+    }
+
+    // Step 5: Assign the "user" role to the new user
+    const userRoleResponse = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/roles/user`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!userRoleResponse.ok) {
+      console.error(
+        "Error creating user account - getting user role: ",
+        userRoleResponse.status
+      );
+      return res.status(500).json({ message: "Failed to create user" });
+    }
+    const { id: userRoleId } = await userRoleResponse.json();
+
+    const assignResponse = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}/role-mappings/realm`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify([
+          {
+            id: userRoleId,
+            name: `user`,
+          },
+        ]),
+      }
+    );
+    if (!assignResponse.ok) {
+      console.error(
+        "Error creating user account - assigning user role: ",
+        assignResponse.status
+      );
       return res.status(500).json({ message: "Failed to create user" });
     }
 

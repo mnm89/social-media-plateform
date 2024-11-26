@@ -37,7 +37,6 @@ async function ensureUsersProfileAttributes() {
     console.error("Failed to bootstrap users profile:", error);
   }
 }
-// services/privacyService.js
 
 async function buildUserProfileWithPrivacy(user, requesterId) {
   // Check friendship and authentication status
