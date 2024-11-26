@@ -122,4 +122,61 @@ router.put("/identity", keycloak.protect("realm:user"), async (req, res) => {
   res.json(user);
 });
 
+router.put("/password", keycloak.protect("realm:user"), async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.kauth.grant.access_token.content.sub;
+  const userName = req.kauth.grant.access_token.content.preferred_username;
+
+  try {
+    // Step 1: Verify current password
+    const loginResponse = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: process.env.KEYCLOAK_WEB_CLIENT_ID,
+          grant_type: "password",
+          username: userName,
+          password: currentPassword,
+        }),
+      }
+    );
+
+    if (!loginResponse.ok) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Step 2: Obtain an admin access token for the service account
+    const token = await getAccessToken();
+
+    // Step 3: Reset user password
+    const response = await fetch(
+      `${process.env.KEYCLOAK_SERVER_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}/reset-password`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: "password",
+          value: newPassword,
+          temporary: false,
+        }),
+      }
+    );
+    if (!response.ok) {
+      console.error("Error patching user password:", response.status);
+
+      return res.status(500).json({ message: "Error patching user password" });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Change password error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
