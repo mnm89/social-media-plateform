@@ -39,7 +39,6 @@ export default function ProfilePrivacyForm({ profile, privacy }) {
         //toast error
       }
     });
-    console.log({ profileState, privacyState });
   };
 
   return (

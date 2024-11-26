@@ -64,3 +64,25 @@ export async function UpdateProfilePrivacy(profile, privacy) {
 
   throw await handleNonOkResponse(response);
 }
+
+export async function UpdatePublicIdentity(identity) {
+  const accessToken = (await cookies()).get("access_token")?.value;
+
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+  const response = await fetch(
+    `${process.env.API_GATEWAY_URL}/profiles/identity`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + accessToken,
+      },
+      body: JSON.stringify(identity),
+    }
+  );
+  if (response.ok) return response.json();
+
+  throw await handleNonOkResponse(response);
+}

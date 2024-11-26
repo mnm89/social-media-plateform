@@ -10,23 +10,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../auth-provider";
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { UpdatePublicIdentity } from "@/actions/profile";
 
 export default function PublicIdentityForm() {
   const { currentUser } = useAuth();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLatName] = useState();
-  const [username, setUsername] = useState();
-  const [email, setEmail] = useState();
+  const [firstName, setFirstName] = useState(currentUser?.given_name);
+  const [lastName, setLatName] = useState(currentUser?.family_name);
+  const [username, setUsername] = useState(currentUser?.preferred_username);
+  const [email, setEmail] = useState(currentUser?.email);
 
-  useEffect(() => {
-    if (currentUser) {
-      setFirstName(currentUser.given_name);
-      setLatName(currentUser.family_name);
-      setUsername(currentUser.preferred_username);
-      setEmail(currentUser.email);
-    }
-  }, [currentUser]);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const saveChanges = () => {
+    startTransition(async () => {
+      try {
+        await UpdatePublicIdentity({
+          firstName,
+          lastName,
+          username,
+          email,
+        });
+        router.refresh();
+      } catch (error) {
+        console.error("Error updating identity", error);
+        //toast error
+      }
+    });
+  };
 
   return (
     <Card className="mb-6">
@@ -80,8 +93,13 @@ export default function PublicIdentityForm() {
         </div>
       </CardContent>
       <CardFooter className="justify-end">
-        <Button className="mt-4" variant="primary">
-          Save Changes
+        <Button
+          className="mt-4"
+          variant="primary"
+          onClick={saveChanges}
+          disabled={isPending}
+        >
+          {isPending ? "Saving changes ..." : "Save Changes"}
         </Button>
       </CardFooter>
     </Card>
