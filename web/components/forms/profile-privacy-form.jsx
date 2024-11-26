@@ -25,12 +25,12 @@ export default function ProfilePrivacyForm({ profile, privacy }) {
       return p;
     }, {})
   );
-  const [isPending, startTransaction] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { bio, address, phone } = profileState;
 
   const saveChanges = () => {
-    startTransaction(async () => {
+    startTransition(async () => {
       try {
         await UpdateProfilePrivacy(profileState, privacyState);
         router.refresh();
