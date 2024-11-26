@@ -28,7 +28,6 @@ export default function ProfilePrivacyForm({ profile, privacy }) {
   const [isPending, startTransaction] = useTransition();
   const router = useRouter();
   const { bio, address, phone } = profileState;
-  console.log({ privacyState, profileState });
 
   const saveChanges = () => {
     startTransaction(async () => {
