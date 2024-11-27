@@ -13,7 +13,7 @@ import {
 import { Storage } from '../models/storage';
 
 const router = express.Router();
-const upload = multer({ dest: 'assets/' });
+const upload = multer({ dest: 'uploads/' });
 const { client } = MinioConfig();
 const { keycloak } = KeycloakSessionConfig();
 

@@ -10,7 +10,7 @@ import { MinioConfig } from '@social-media-platform/common-config';
 import { Storage } from '../models/storage';
 
 const router = express.Router();
-const upload = multer({ dest: 'assets/' });
+const upload = multer({ dest: 'uploads/' });
 const { client } = MinioConfig();
 
 router.post('/files/upload', upload.single('file'), async (req, res) => {

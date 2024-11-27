@@ -24,9 +24,7 @@
         "bundle": false,
         "main": "apps/file-service/src/main.ts",
         "tsConfig": "apps/file-service/tsconfig.app.json",
-        "assets": [
-          "apps/file-service/src/assets"
-        ],
+        "assets": [],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,

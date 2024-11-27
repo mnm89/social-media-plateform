@@ -15,7 +15,7 @@ import { Storage } from '../models/storage';
 import { KeycloakRequest } from '@social-media-platform/keycloak-utils';
 
 const router = express.Router();
-const upload = multer({ dest: 'assets/' });
+const upload = multer({ dest: 'uploads/' });
 const { client } = MinioConfig();
 const { keycloak } = KeycloakSessionConfig();
 const { client: cache } = CacheConfig();
