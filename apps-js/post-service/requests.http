@@ -1,0 +1,12 @@
+@ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUcjB2UWVNQThNSlR2aS15bGYxWVFwdUVYMjNiWDAtMi0zeEw2RWo5TXZZIn0.eyJleHAiOjE3MzA5NjY5MTAsImlhdCI6MTczMDk2NjYxMCwianRpIjoiYzNhN2QyODItYzg0OC00NGI4LWE0YmQtMGNlZTJkMGZmMWQ4IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrOjgwODAvcmVhbG1zL3NvY2lhbC1tZWRpYS1wbGF0Zm9ybSIsInN1YiI6IjExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMSIsInR5cCI6IkJlYXJlciIsImF6cCI6IndlYi1jbGllbnQiLCJzaWQiOiIxMzg5MWM5Mi0xODdlLTQ3ZDQtOTY5My0zOGVlNTgzZTc1ZjUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIi8qIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJ1c2VyIl19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiam9obmRvZSIsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSJ9.CJmTEK-5V7RotKALmSXTH4ga_cO44Q2XR8qEgXaK8hYsyvF-F-Zn8d_lbgYTMur5moMcSxKsI5pnMYMmVDsnpnEWlbsYD_wPqbNVDCclkZhDa6nW8hE80K91nUiwQ_XJxRpsBdrcn91a1hvQXvJKPJpDKTZwVsMVMwYBKzz2A45DxPWDLHjXGbLvtu_kqNWEN6-jPgcpWsNBiE_YC0nG9L03vR44nOzRDqAhWz_Wv6uYQZW0Ewvzpf9seoyOh9lMcSLh88qvqefSac5-rRxqT1aWlSPZERWvmyMC0ey8akxZ20Zi4X3I7NOq1AUArnw5AuqmhtiI8MgOxY6iGii8rQ
+curl -X GET  "http://localhost:3002/posts" \
+-H "Authorization: Bearer {{ACCESS_TOKEN}}" \
+-H "Content-Type: application/json" 
+
+### post comment
+curl -X POST  "http://localhost:3002/comments/3a0a250d-c8ff-43ef-8362-cd4552a87ab9" \
+-H "Authorization: Bearer {{ACCESS_TOKEN}}" \
+-H "Content-Type: application/json" \
+-d '{
+"content":"Nice article. Thank you for the precious informations you gave. I would love to visit New York as soon as possible"
+}'

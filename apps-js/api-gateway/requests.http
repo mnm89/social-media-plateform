@@ -1,0 +1,16 @@
+@ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUcjB2UWVNQThNSlR2aS15bGYxWVFwdUVYMjNiWDAtMi0zeEw2RWo5TXZZIn0.eyJleHAiOjE3MzA4OTkxMTcsImlhdCI6MTczMDg5ODgxNywianRpIjoiZjcyODcyZTctMTAyYi00MjgyLWJiMGQtMTFmZDUyMGFlODE0IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrOjgwODAvcmVhbG1zL3NvY2lhbC1tZWRpYS1wbGF0Zm9ybSIsInN1YiI6IjExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMSIsInR5cCI6IkJlYXJlciIsImF6cCI6IndlYi1jbGllbnQiLCJzaWQiOiIzMjEyMTQ1NC04ZTI2LTQwZmItYjZkMC04ZWFkNDlhMDliOTciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIi8qIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJ1c2VyIl19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiam9obmRvZSIsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSJ9.smVE-okRnMWRZMmJPlA3lZBd3sSPy20UAPTjHEiAdu5eI5nWKPHUrZGDQvq433DRDoFQTeST1qE-RDSeVZVwW-w7nQGj6sXes0ov-qRwRqW9z_yvZx20IJ5nhxR7w_BaFgPZkUvUVPhDByyzj9XnrKFK7lJzEsk9oIlcr_tluGHC8cRWB3Uf8z0ozekb33tRMvLqcYMt_0-DB79lcVLWJT8CtNqx800aYwLZXYHVlwb2Ih6JnkNvDTa9tueAVFEC4pMS9ceO4rs-HBNHzBSUK838-wBwQW_AzgoJzvtz2-OYm5Kl8o8kXmCTRscjIuq59VeA3rdlp86VyZqMFcF9pA
+curl -X POST  "http://localhost/login" \
+-H "Content-Type: application/json" \
+-d '{
+   "username":"johndoe",
+   "password":"password"
+}'
+###
+curl -X GET  "http://localhost/posts/2" \
+-H "Authorization: Bearer {{ACCESS_TOKEN}}" \
+-H "Content-Type: application/json" 
+
+###
+
+curl -X GET  "http://localhost/public-profiles/77777777-7777-7777-7777-777777777777" \
+-H "Content-Type: application/json" 
