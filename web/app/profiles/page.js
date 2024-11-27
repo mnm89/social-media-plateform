@@ -1,20 +1,9 @@
-import { cookies } from "next/headers";
-import { isTokenExpired } from "@/lib/token";
-import { UnauthorizedCard } from "@/components/unauthorized";
-
 export default async function Page() {
-  const token = (await cookies()).get("access_token")?.value;
-  if (isTokenExpired(token)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <UnauthorizedCard />
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Profiles </h1>
-    </div>
+    <section className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h1 className="text-3xl font-bold mb-8">Profiles </h1>
+      </div>
+    </section>
   );
 }
