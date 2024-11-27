@@ -29,7 +29,7 @@ async function ensureMinioBucket(bucketName) {
     minioClient.bucketExists(bucketName, (err, exists) => {
       if (err) reject(err);
       else if (!exists) {
-        minioClient.makeBucket(bucketName, "", { ObjectLocking }, (err) => {
+        minioClient.makeBucket(bucketName, "", (err) => {
           if (err) reject(err);
           else resolve();
         });
