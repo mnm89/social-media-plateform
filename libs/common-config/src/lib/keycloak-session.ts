@@ -1,11 +1,7 @@
 import Session from 'express-session';
 import KeycloakConnect from 'keycloak-connect';
-import { config } from 'dotenv';
+
 import { RequestHandler } from 'express';
-import Minio from 'minio';
-
-config();
-
 interface IKeycloakSessionConfig {
   store: Session.MemoryStore;
   session: () => RequestHandler;
@@ -34,20 +30,5 @@ export function KeycloakSessionConfig(): IKeycloakSessionConfig {
         'bearer-only': true,
       }
     ),
-  };
-}
-
-interface IMinioConfig {
-  client: Minio.Client;
-}
-export function MinioConfig(): IMinioConfig {
-  return {
-    client: new Minio.Client({
-      endPoint: process.env.MINIO_ENDPOINT,
-      port: parseInt(process.env.MINIO_PORT, 10),
-      accessKey: process.env.MINIO_ACCESS_KEY,
-      secretKey: process.env.MINIO_SECRET_KEY,
-      useSSL: false,
-    }),
   };
 }

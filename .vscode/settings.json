@@ -21,6 +21,7 @@
         "lucide",
         "multivalued",
         "resave",
+        "Umzug",
         "UUIDV"
     ],
     "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
