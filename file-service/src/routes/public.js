@@ -13,49 +13,41 @@ const {
 } = require("../helpers/minioObjects");
 
 const router = express.Router();
+const upload = multer({ dest: "uploads/" });
 
-const upload = multer({ storage: multer.memoryStorage() }).single("file");
+router.post("/files/upload", upload.single("file"), async (req, res) => {
+  const { externalId, entityType } = req.body;
+  const file = req.file;
 
-router.post("/upload", async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      console.error("Multer error:", err);
-      return res.status(500).json({ error: err.message });
-    }
+  if (!file) {
+    return res.status(400).json({ error: "No file provided." });
+  }
 
-    const { externalId, entityType } = req.body;
-    const file = req.file;
+  try {
+    const storage = new Storage({
+      entityType,
+      externalId,
+      type: getFileTypeFromMimeType(file.mimetype),
+      bucket: process.env.MINIO_BUCKET_NAME,
+    });
 
-    if (!file) {
-      return res.status(400).json({ error: "No file provided." });
-    }
+    const fileName = `${storage.get("id")}${path.extname(file.originalname)}`;
+    storage.set("path", fileName);
 
-    try {
-      const storage = new Storage({
-        entityType,
-        externalId,
-        type: getFileTypeFromMimeType(file.mimetype),
-        bucket: process.env.MINIO_BUCKET_NAME,
-      });
-
-      const fileName = `${storage.get("id")}${path.extname(file.originalname)}`;
-      storage.set(
-        "path",
-        externalId ? `${externalId}/${fileName}` : `${fileName}`
-      );
-
-      const uploaded = await uploadFileToMinio(file, storage);
-      if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
-      await storage.save();
-      res.status(201).json(storage);
-    } catch (error) {
-      console.error("Upload error:", error);
-      res.status(500).json({ error: "Failed to upload file." });
-    }
-  });
+    const uploaded = await uploadFileToMinio(file, storage, {
+      "x-amz-meta-entityType": entityType,
+      "x-amz-meta-externalId": externalId,
+    });
+    if (!uploaded) res.status(500).json({ error: "Failed to upload file." });
+    await storage.save();
+    res.status(201).json(storage);
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ error: "Failed to upload file." });
+  }
 });
 
-router.get("/", async (req, res) => {
+router.get("/files", async (req, res) => {
   try {
     const storages = await Storage.findAll({
       where: {
@@ -68,7 +60,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
-router.get("/:id", async (req, res) => {
+router.get("/files/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -83,7 +75,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
-router.delete("/:id", async (req, res) => {
+router.delete("/files/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -103,7 +95,7 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
-router.post("/signed-url", async (req, res) => {
+router.post("/files/signed-url", async (req, res) => {
   const { storageId } = req.body;
 
   try {

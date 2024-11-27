@@ -125,15 +125,20 @@ const groups = [
     displayDescription: "Attributes, which refer to user metadata",
   },
 ];
-
 const defaultPrivacy = [
   { attribute: "phone", visibility: "private" },
   { attribute: "address", visibility: "friends-only" },
   { attribute: "bio", visibility: "public" },
 ];
 
+const defaultUsersIds = Array.from({ length: 8 }, (_, i) => i + 1).map(
+  (x) =>
+    `${x}${x}${x}${x}${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}`
+);
+
 module.exports = {
   groups,
   attributes,
   defaultPrivacy,
+  defaultUsersIds,
 };

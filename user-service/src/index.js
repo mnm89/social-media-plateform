@@ -3,7 +3,16 @@ const express = require("express");
 const session = require("./config/session");
 const keycloak = require("./config/keycloak");
 const routes = require("./routes");
-const { ensureUsersProfileAttributes } = require("./helpers/profilePrivacy");
+const {
+  ensureUsersProfileAttributes,
+  ensurePrivacySettings,
+} = require("./helpers/profilePrivacy");
+const { defaultUsersIds } = require("./config/profile");
+
+const bootstrap = async () => {
+  await ensureUsersProfileAttributes();
+  await Promise.all(defaultUsersIds.map(ensurePrivacySettings));
+};
 
 const app = express();
 
@@ -16,6 +25,5 @@ app.use("/", routes);
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  ensureUsersProfileAttributes();
-  console.log(`User service running on port ${PORT}`);
+  bootstrap().then(() => console.log(`User service running on port ${PORT}`));
 });

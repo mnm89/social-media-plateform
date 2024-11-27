@@ -142,6 +142,8 @@ services:
       - FILE_SERVICE_URL=http://file-service:3000
       - REDIS_URL=redis://redis:6379
     depends_on:
+      keycloak:
+        condition: service_healthy
       user-db:
         condition: service_healthy
       redis:
@@ -184,7 +186,7 @@ services:
       - MINIO_PORT=9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
-      - MINIO_BUCKET_NAME=assets
+      - MINIO_BUCKET_NAME=public
       - REDIS_URL=redis://redis:6379
     depends_on:
       file-db:

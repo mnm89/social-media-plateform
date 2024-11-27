@@ -1,5 +1,6 @@
 const express = require("express");
 const { getAccessToken } = require("../helpers/accessToken");
+const { ensurePrivacySettings } = require("../helpers/profilePrivacy");
 const router = express.Router();
 
 // Endpoint for user registration
@@ -135,6 +136,9 @@ router.post("/register", async (req, res) => {
       );
       return res.status(500).json({ message: "Failed to create user" });
     }
+
+    //Step 6: Ensure privacy settings exist for this user
+    await ensurePrivacySettings(userId);
 
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {

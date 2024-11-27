@@ -3,6 +3,7 @@ const session = require("express-session");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const Keycloak = require("keycloak-connect");
 const dotenv = require("dotenv");
+const proxyConfig = require("./proxy");
 
 // Load environment variables
 dotenv.config();
@@ -49,73 +50,38 @@ app.use((req, res, next) => {
     path,
     createProxyMiddleware({
       target: `${process.env.USER_SERVICE_URL}`,
-      changeOrigin: true,
       pathRewrite: { [`^${path}`]: `/auth${path}` },
-      on: {
-        error: (err, req, res) => {
-          console.error("Proxy Error: ", err);
-          res.status(500).json({ message: "Internal server error" });
-        },
-      },
+      ...proxyConfig,
     })
   );
 });
 
 // Open profiles route
-app.get(
-  "/public-profiles/:id",
+app.use(
+  "/public-profiles",
   createProxyMiddleware({
-    target: `${process.env.USER_SERVICE_URL}`,
-    changeOrigin: true,
-    pathRewrite: (path) => {
-      return path.replace("public-profiles", "profiles");
-    },
-    on: {
-      error: (err, req, res) => {
-        console.error("Proxy Error: ", err);
-        res.status(500).json({ message: "Internal server error" });
-      },
-    },
+    target: `${process.env.USER_SERVICE_URL}/public/profiles`,
+    ...proxyConfig,
   })
 );
 
 // Open posts endpoint
-app.get(
+app.use(
   "/public-posts",
   createProxyMiddleware({
-    target: `${process.env.POST_SERVICE_URL}`,
-    changeOrigin: true,
-    pathRewrite: (path) => {
-      return path.replace("public-posts", "public");
-    },
-    on: {
-      error: (err, req, res) => {
-        console.error("Proxy Error: ", err);
-        res.status(500).json({ message: "Internal server error" });
-      },
-    },
+    target: `${process.env.POST_SERVICE_URL}/public/posts`,
+    ...proxyConfig,
   })
 );
 
 // Open routes for File Service
-["/files"].forEach((path) => {
-  app.use(
-    path,
-    keycloak.protect((token) => {
-      return token.hasRole("realm:user") || token.hasRole("realm:admin");
-    }),
-    createProxyMiddleware({
-      target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
-      changeOrigin: true,
-      on: {
-        error: (err, req, res) => {
-          console.error("Proxy Error: ", err);
-          res.status(500).json({ message: "Internal server error" });
-        },
-      },
-    })
-  );
-});
+app.use(
+  "/public-files",
+  createProxyMiddleware({
+    target: `${process.env.FILE_SERVICE_URL}/public/files`, // URL of the post service
+    ...proxyConfig,
+  })
+);
 
 // Protected routes for User Service
 ["/users", "/friendships", "/profiles"].forEach((path) => {
@@ -126,13 +92,7 @@ app.get(
     }),
     createProxyMiddleware({
       target: `${process.env.USER_SERVICE_URL}${path}`, // URL of the post service
-      changeOrigin: true,
-      on: {
-        error: (err, req, res) => {
-          console.error("Proxy Error: ", err);
-          res.status(500).json({ message: "Internal server error" });
-        },
-      },
+      ...proxyConfig,
     })
   );
 });
@@ -146,13 +106,7 @@ app.get(
     }),
     createProxyMiddleware({
       target: `${process.env.POST_SERVICE_URL}${path}`, // URL of the post service
-      changeOrigin: true,
-      on: {
-        error: (err, req, res) => {
-          console.error("Proxy Error: ", err);
-          res.status(500).json({ message: "Internal server error" });
-        },
-      },
+      ...proxyConfig,
     })
   );
 });
@@ -166,15 +120,7 @@ app.get(
     }),
     createProxyMiddleware({
       target: `${process.env.FILE_SERVICE_URL}${path}`, // URL of the post service
-      changeOrigin: true,
-      on: {
-        error: (err, req, res) => {
-          console.error("Proxy Error: ", err);
-          if (!res.headersSent) {
-            res.status(500).json({ message: "Internal server error" });
-          }
-        },
-      },
+      ...proxyConfig,
     })
   );
 });
