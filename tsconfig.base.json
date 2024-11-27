@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@social-media-platform/common-config": [
+        "libs/common-config/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
