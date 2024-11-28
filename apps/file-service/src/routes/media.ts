@@ -1,21 +1,15 @@
 import express from 'express';
-import multer from 'multer';
 import path from 'path';
 import {
   deleteFileFromMinio,
   getFileTypeFromMimeType,
   uploadFileToMinio,
 } from '../utils';
-import {
-  MinioConfig,
-  KeycloakSessionConfig,
-} from '@social-media-platform/common-config';
+
 import { Storage } from '../models/storage';
+import { keycloak, minio, upload } from '../config';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
-const { client } = MinioConfig();
-const { keycloak } = KeycloakSessionConfig();
 
 router.post(
   '/:postId',
@@ -66,7 +60,7 @@ router.get(
 
       const signedMedias = await Promise.all(
         medias.map(async (storage) => {
-          const signedUrl = await client.presignedUrl(
+          const signedUrl = await minio.presignedUrl(
             'GET',
             storage.get('bucket'),
             storage.get('path'),

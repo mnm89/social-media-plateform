@@ -1,29 +1,17 @@
-import {
-  MinioConfig,
-  DatabaseConfig,
-} from '@social-media-platform/common-config';
+import { migrator, minio, sequelize } from './config';
 import { buckets, publicPolicy } from './utils';
 
-const { client } = MinioConfig();
-const { sequelize, migrator } = DatabaseConfig(
-  __dirname + '/models',
-  __dirname + '/migrations/*.{js,ts}'
-);
-
 async function ensureMinioBucket(bucketName) {
-  const exists = await client.bucketExists(bucketName);
+  const exists = await minio.bucketExists(bucketName);
 
   if (!exists)
-    await client.makeBucket(
-      bucketName,
-      process.env.MINIO_REGION ?? 'us-east-1'
-    );
+    await minio.makeBucket(bucketName, process.env.MINIO_REGION ?? 'us-east-1');
 }
 
 export default async function bootstrap() {
   await Promise.all(buckets.map(ensureMinioBucket));
 
-  await client.setBucketPolicy(
+  await minio.setBucketPolicy(
     'avatars',
     JSON.stringify(publicPolicy('avatars'))
   );

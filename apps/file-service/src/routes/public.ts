@@ -6,12 +6,10 @@ import {
   getFileTypeFromMimeType,
   uploadFileToMinio,
 } from '../utils';
-import { MinioConfig } from '@social-media-platform/common-config';
 import { Storage } from '../models/storage';
+import { minio, upload } from '../config';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
-const { client } = MinioConfig();
 
 router.post('/files/upload', upload.single('file'), async (req, res) => {
   const { externalId, entityType } = req.body;
@@ -101,7 +99,7 @@ router.post('/files/signed-url', async (req, res) => {
     if (!storage) {
       return res.status(404).json({ message: 'Storage not found.' });
     }
-    const signedUrl = await client.presignedUrl(
+    const signedUrl = await minio.presignedUrl(
       'GET',
       storage.get('bucket') as string,
       storage.get('path') as string,
