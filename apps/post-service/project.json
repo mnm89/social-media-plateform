@@ -1,7 +1,7 @@
 {
-  "name": "user-service",
+  "name": "post-service",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/user-service/src",
+  "sourceRoot": "apps/post-service/src",
   "projectType": "application",
   "tags": [],
   "implicitDependencies": [
@@ -17,13 +17,13 @@
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/user-service",
+        "outputPath": "dist/apps/post-service",
         "format": [
           "cjs"
         ],
         "bundle": false,
-        "main": "apps/user-service/src/main.ts",
-        "tsConfig": "apps/user-service/tsconfig.app.json",
+        "main": "apps/post-service/src/main.ts",
+        "tsConfig": "apps/post-service/tsconfig.app.json",
         "assets": [],
         "generatePackageJson": true,
         "esbuildOptions": {
@@ -53,15 +53,15 @@
         "build"
       ],
       "options": {
-        "buildTarget": "user-service:build",
+        "buildTarget": "post-service:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "user-service:build:development"
+          "buildTarget": "post-service:build:development"
         },
         "production": {
-          "buildTarget": "user-service:build:production"
+          "buildTarget": "post-service:build:production"
         }
       }
     },
@@ -69,7 +69,7 @@
       "dependsOn": [
         "build"
       ],
-      "command": "docker build -f apps/user-service/Dockerfile . -t user-service"
+      "command": "docker build -f apps/post-service/Dockerfile . -t post-service"
     }
   }
 }
