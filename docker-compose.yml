@@ -7,13 +7,13 @@ services:
       POSTGRES_PASSWORD: user_password
       POSTGRES_DB: user_service
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user_user -d user_service"]
+      test: ['CMD-SHELL', 'pg_isready -U user_user -d user_service']
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 10s
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - user_data:/var/lib/postgresql/data
 
@@ -25,13 +25,13 @@ services:
       POSTGRES_PASSWORD: post_password
       POSTGRES_DB: post_service
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U post_user -d post_service"]
+      test: ['CMD-SHELL', 'pg_isready -U post_user -d post_service']
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 10s
     ports:
-      - "5434:5432"
+      - '5434:5432'
     volumes:
       - post_data:/var/lib/postgresql/data
 
@@ -43,13 +43,13 @@ services:
       POSTGRES_PASSWORD: file_password
       POSTGRES_DB: file_service
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U file_user -d file_service"]
+      test: ['CMD-SHELL', 'pg_isready -U file_user -d file_service']
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 10s
     ports:
-      - "5435:5432"
+      - '5435:5432'
     volumes:
       - file_data:/var/lib/postgresql/data
 
@@ -61,7 +61,7 @@ services:
       POSTGRES_USER: keycloak_user
       POSTGRES_PASSWORD: keycloak_password
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U keycloak_user -d keycloak"]
+      test: ['CMD-SHELL', 'pg_isready -U keycloak_user -d keycloak']
       interval: 10s
       retries: 5
       start_period: 30s
@@ -88,7 +88,7 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
+          'CMD-SHELL',
           "exec 3<>/dev/tcp/localhost/9000; echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3; cat <&3 | grep -q 'HTTP/1.1 200 OK'",
         ]
       interval: 10s
@@ -96,7 +96,7 @@ services:
       start_period: 30s
       timeout: 10s
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       keycloak-db:
         condition: service_healthy
@@ -107,7 +107,7 @@ services:
     container_name: api-gateway
     build: ./api-gateway
     ports:
-      - "80:3000"
+      - '80:3000'
     environment:
       - SESSION_SECRET=session_secret
       - KEYCLOAK_SERVER_URL=http://keycloak:8080
@@ -201,7 +201,7 @@ services:
     image: minio/minio:${MINIO_VERSION:-RELEASE.2024-10-13T13-34-11Z.fips}
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -209,8 +209,8 @@ services:
     volumes:
       - minio_data:/data
     expose:
-      - "9000"
-      - "9001"
+      - '9000'
+      - '9001'
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -222,31 +222,22 @@ services:
     container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - '5672:5672'
+      - '15672:15672'
 
   redis:
     container_name: redis
     image: redis:latest
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data # Mount a named volume to persist data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 5s
-
-  notification-service:
-    container_name: notification-service
-    build: ./notification-service
-    # ports:
-    #   - "3004:3000"
-    depends_on:
-      - redis
-      - rabbitmq
 
   recommendation-service:
     container_name: recommendation-service
