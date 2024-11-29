@@ -21,6 +21,7 @@
     "@nx/eslint-plugin": "20.1.3",
     "@nx/jest": "20.1.3",
     "@nx/js": "20.1.3",
+    "@nx/next": "^20.1.4",
     "@nx/node": "20.1.3",
     "@nx/workspace": "20.1.3",
     "@swc-node/register": "~1.9.1",
@@ -47,6 +48,7 @@
   },
   "workspaces": [
     "libs/*",
-    "apps/*"
+    "apps/*",
+    "web"
   ]
 }
