@@ -1,5 +1,6 @@
 import 'pg';
 import 'pg-hstore';
+import 'sequelize';
 import { config } from 'dotenv';
 
 config();
