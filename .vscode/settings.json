@@ -15,16 +15,19 @@
     },
     "cSpell.words": [
         "checkperiod",
+        "hstore",
         "jwks",
         "kauth",
         "keycloak",
         "lucide",
         "multivalued",
         "resave",
+        "Umzug",
         "UUIDV"
     ],
     "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
     "javascript.inlayHints.parameterTypes.enabled": true,
     "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
-    "javascript.inlayHints.variableTypes.enabled": true
+    "javascript.inlayHints.variableTypes.enabled": true,
+    "nxConsole.nxWorkspacePath": ""
 }

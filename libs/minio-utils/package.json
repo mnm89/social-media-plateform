@@ -1,0 +1,9 @@
+{
+  "name": "@social-media-platform/minio-utils",
+  "version": "0.0.1",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "minio": "^8.0.2",
+    "tslib": "^2.3.0"
+  }
+}

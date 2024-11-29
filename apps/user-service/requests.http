@@ -1,0 +1,13 @@
+@TOKEN=
+curl -X POST  "http://localhost:3001/auth/login" \
+-H "Content-Type: application/json" \
+-d '{
+   "username":"johndoe",
+   "password":"password"
+}'
+### refresh
+curl -X POST  "http://localhost:3001/auth/refresh" \
+-H "Content-Type: application/json" \
+-d '{
+   "refreshToken":"{{TOKEN}}"
+}'

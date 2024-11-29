@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@social-media-platform/cache-utils": ["libs/cache-utils/src/index.ts"],
+      "@social-media-platform/database-utils": [
+        "libs/database-utils/src/index.ts"
+      ],
+      "@social-media-platform/keycloak-utils": [
+        "libs/keycloak-utils/src/index.ts"
+      ],
+      "@social-media-platform/minio-utils": ["libs/minio-utils/src/index.ts"]
+    },
+    "typeRoots": ["node_modules/@types", "types"]
+  },
+  "exclude": ["node_modules", "tmp"]
+}

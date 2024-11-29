@@ -1,0 +1,20 @@
+{
+  "name": "cache-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/cache-utils/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/cache-utils",
+        "tsConfig": "libs/cache-utils/tsconfig.lib.json",
+        "packageJson": "libs/cache-utils/package.json",
+        "main": "libs/cache-utils/src/index.ts",
+        "assets": ["libs/cache-utils/*.md"]
+      }
+    }
+  }
+}

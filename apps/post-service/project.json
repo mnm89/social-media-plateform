@@ -1,0 +1,71 @@
+{
+  "name": "post-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/post-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/post-service",
+        "format": [
+          "cjs"
+        ],
+        "bundle": false,
+        "main": "apps/post-service/src/main.ts",
+        "tsConfig": "apps/post-service/tsconfig.app.json",
+        "assets": [],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "buildTarget": "post-service:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "post-service:build:development"
+        },
+        "production": {
+          "buildTarget": "post-service:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": [
+        "build"
+      ],
+      "command": "docker build -f apps/post-service/Dockerfile . -t post-service"
+    }
+  }
+}
