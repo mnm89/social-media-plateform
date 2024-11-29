@@ -1,13 +1,12 @@
 import express from 'express';
-import { KeycloakSessionConfig } from '@social-media-platform/common-config';
 import routes from './routes';
 import bootstrap from './bootstrap';
+import { keycloak, session } from './config';
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 const app = express();
-const { keycloak, session } = KeycloakSessionConfig();
 
 app.use(session());
 app.use(keycloak.middleware());
