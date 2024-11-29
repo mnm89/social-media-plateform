@@ -1,7 +1,6 @@
-const { getAccessToken } = require('./accessToken');
-const { attributes, groups } = require('../config/profile');
+import { getAccessToken } from './token';
 
-async function ensureUsersProfileAttributes() {
+export async function ensureUsersProfileAttributes(attributes, groups) {
   const token = await getAccessToken();
 
   try {
@@ -26,7 +25,3 @@ async function ensureUsersProfileAttributes() {
     console.error('Failed to bootstrap users profile:', error);
   }
 }
-
-module.exports = {
-  ensureUsersProfileAttributes,
-};

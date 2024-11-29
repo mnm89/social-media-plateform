@@ -1,12 +1,8 @@
-"use strict";
-
-module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("posts", [
-      {
-        userId: "11111111-1111-1111-1111-111111111111",
-        title: "Exploring the San Francisco Tech Scene",
-        content: `
+export const posts = [
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    title: 'Exploring the San Francisco Tech Scene',
+    content: `
 San Francisco has long been heralded as the heart of the tech industry, a place where startups, venture capitalists, and tech giants all converge to create innovations that shape the future. The city and the greater Silicon Valley area attract thousands of tech enthusiasts, entrepreneurs, and professionals every year, all seeking to be a part of the next big thing. But what is it that makes San Francisco's tech scene so unique? This article will take you on a deep dive into the history, culture, and current state of the tech industry in the Bay Area, as well as some of the exciting opportunities and challenges it faces today.
 
 ### A Brief History of Silicon Valley
@@ -53,12 +49,12 @@ Despite the challenges, the future of tech in San Francisco remains bright. The 
 
 San Francisco’s tech scene is an ecosystem of ambition, creativity, and resilience. Whether you’re an entrepreneur looking to launch a startup, an engineer eager to work on cutting-edge projects, or a tech enthusiast hoping to immerse yourself in innovation, San Francisco offers endless possibilities. The city has earned its reputation as a global tech hub, and as it continues to evolve, it promises to be an exciting place for anyone who believes in the power of technology to change the world.
 `,
-        visibility: "public",
-      },
-      {
-        userId: "11111111-1111-1111-1111-111111111111",
-        title: "My Favorite Programming Languages",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    title: 'My Favorite Programming Languages',
+    content: `
 Programming languages are the tools we use to bring ideas to life in the digital world. Over the years, I've had the opportunity to work with a variety of languages, each with its own strengths, quirks, and ideal use cases. Here, I’ll walk you through some of my personal favorites and explain what I like about each one. From the flexibility of JavaScript to the power of Rust, every language brings something unique to the table.
 
 ### JavaScript: The Ubiquitous Language of the Web
@@ -139,12 +135,12 @@ Choosing a favorite programming language can feel a bit like choosing a favorite
 
 The world of programming languages is vast and always evolving. While these are my current favorites, I’m always open to learning new languages and exploring the unique features they bring to the table. The key is to stay curious and flexible, adapting to new languages and paradigms as they emerge. After all, the best language is the one that helps you bring your ideas to life.
 `,
-        visibility: "friends-only",
-      },
-      {
-        userId: "22222222-2222-2222-2222-222222222222",
-        title: "Digital Art Tips for Beginners",
-        content: `
+    visibility: 'friends-only',
+  },
+  {
+    userId: '22222222-2222-2222-2222-222222222222',
+    title: 'Digital Art Tips for Beginners',
+    content: `
 Getting started with digital art can feel both exciting and a bit overwhelming. With so many tools, techniques, and styles available, beginners often wonder where to start and what they need to know to improve their skills. Whether you’re aiming to create illustrations, concept art, or digital paintings, this guide offers tips and insights to help you make the most of your digital art journey. Here, I’ll cover essential tools, techniques, and best practices to get you started on the right track.
 
 ### 1. Choose the Right Software
@@ -236,12 +232,12 @@ Exploring different art forms, taking inspiration from various sources, and expe
 
 Digital art is a rewarding and versatile form of creative expression. With the right tools, foundational skills, and dedication, you can grow as an artist and bring your ideas to life on the digital canvas. Remember to practice, stay curious, and most importantly, enjoy the process. Whether you’re just starting or looking to hone your skills, digital art offers endless possibilities. Happy creating!
 `,
-        visibility: "public",
-      },
-      {
-        userId: "22222222-2222-2222-2222-222222222222",
-        title: "Exploring New York City’s Art Scene",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '22222222-2222-2222-2222-222222222222',
+    title: 'Exploring New York City’s Art Scene',
+    content: `
 New York City has long been a global center for art, with a rich and diverse scene that attracts artists, collectors, and enthusiasts from around the world. From renowned museums and galleries to street art and hidden studios, NYC offers a seemingly endless array of artistic experiences. Here’s a guide to some must-visit spots and art experiences that capture the essence of New York’s vibrant art scene.
 
 ### 1. **The Metropolitan Museum of Art**
@@ -272,12 +268,12 @@ New York City hosts a number of art fairs and events throughout the year, attrac
 
 New York City’s art scene is as diverse and dynamic as the city itself. Whether you’re exploring classic works at the Met, discovering emerging artists in Chelsea, or capturing street art in Bushwick, NYC offers endless opportunities to engage with art. For anyone passionate about creativity and culture, New York’s art scene is an experience not to be missed. Plan your visit and prepare to be inspired by the city’s artistic energy!
 `,
-        visibility: "private",
-      },
-      {
-        userId: "33333333-3333-3333-3333-333333333333",
-        title: "Top Destinations for 2024",
-        content: `
+    visibility: 'private',
+  },
+  {
+    userId: '33333333-3333-3333-3333-333333333333',
+    title: 'Top Destinations for 2024',
+    content: `
 As the world opens up more than ever, 2024 promises exciting opportunities for travelers seeking new experiences, cultures, and landscapes. From bustling cities to serene beaches, this year’s top destinations offer something for everyone, whether you’re an adventure enthusiast, a foodie, or someone looking to unwind in nature. Here’s a list of must-visit destinations for 2024 that are sure to inspire your next journey.
 
 ### 1. **Kyoto, Japan**
@@ -308,12 +304,12 @@ Queensland is an adventurer’s paradise, offering access to both the Great Barr
 
 From ancient temples in Kyoto to the beaches of Tulum and the natural wonders of Queensland, 2024’s top travel destinations offer diverse experiences for every type of traveler. Whether you're looking for history, relaxation, adventure, or culture, these locations promise memorable experiences and new discoveries. Pack your bags and start planning your dream trip for 2024!
 `,
-        visibility: "public",
-      },
-      {
-        userId: "33333333-3333-3333-3333-333333333333",
-        title: "Marketing Trends to Watch",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '33333333-3333-3333-3333-333333333333',
+    title: 'Marketing Trends to Watch',
+    content: `
 As digital landscapes and consumer behaviors evolve, staying ahead of marketing trends is essential for businesses and marketers looking to maintain a competitive edge. 2024 is shaping up to be a transformative year in marketing, with a strong focus on personalization, AI, and sustainability. Here are some key trends to watch that can help you reach and engage your audience more effectively in the coming year.
 
 ### 1. **AI-Driven Personalization**
@@ -344,12 +340,12 @@ As data privacy regulations tighten, brands are prioritizing privacy-first strat
 
 2024 is set to be an exciting year in marketing, with trends that emphasize personalization, trust, and interactivity. From AI-powered personalization to sustainable branding, these trends offer brands the opportunity to connect with audiences in deeper, more meaningful ways. Staying aware of these shifts and being willing to adapt can help marketers create impactful strategies that resonate with today’s consumers. Embrace these trends, and watch your marketing efforts thrive in the year ahead!
 `,
-        visibility: "friends-only",
-      },
-      {
-        userId: "11111111-1111-1111-1111-111111111111",
-        title: "New Technologies I'm Excited About",
-        content: `
+    visibility: 'friends-only',
+  },
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    title: "New Technologies I'm Excited About",
+    content: `
 Technology is evolving at an incredible pace, and each year brings advancements that push the boundaries of what’s possible. From artificial intelligence to quantum computing, 2024 has introduced some truly exciting innovations that promise to transform industries and daily life. Here’s a look at a few of the new technologies I’m especially excited about and how they could impact the future.
 
 ### 1. **Generative AI**
@@ -380,12 +376,12 @@ The rollout of 5G networks is enabling faster, more reliable internet connection
 
 The pace of technological innovation is breathtaking, and the potential for positive change is immense. From life-changing advancements in healthcare to sustainable energy solutions and revolutionary computing power, these new technologies have the power to shape the future in profound ways. I’m excited to see how these developments unfold and the impact they’ll have on our world. Embracing these technologies not only opens doors for innovation but also presents opportunities to make a real difference in people’s lives.
 `,
-        visibility: "public",
-      },
-      {
-        userId: "11111111-1111-1111-1111-111111111111",
-        title: "Why I Love Working Remotely",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    title: 'Why I Love Working Remotely',
+    content: `
 Working remotely has become a new standard for many professionals, and for good reason. The flexibility, freedom, and productivity that remote work offers are hard to beat, making it an increasingly popular choice among employees and employers alike. Here are some of the main reasons why I love working remotely and how it has transformed my work-life balance, productivity, and overall satisfaction.
 
 ### 1. **Flexibility and Work-Life Balance**
@@ -416,12 +412,12 @@ With the freedom to structure my day, I can dedicate more time to health and wel
 
 Working remotely has been a transformative experience that has improved my productivity, enhanced my work-life balance, and allowed me to explore new places and routines. The flexibility, freedom, and personal growth opportunities that remote work provides have made it a lifestyle I truly love. As more companies embrace remote work, I believe it will continue to be a powerful option for those seeking a balanced and fulfilling work experience.
 `,
-        visibility: "private",
-      },
-      {
-        userId: "22222222-2222-2222-2222-222222222222",
-        title: "My Top 5 Artistic Inspirations",
-        content: `
+    visibility: 'private',
+  },
+  {
+    userId: '22222222-2222-2222-2222-222222222222',
+    title: 'My Top 5 Artistic Inspirations',
+    content: `
 Art has the power to inspire, transform, and connect us. Throughout my creative journey, I’ve been influenced by a variety of artists, movements, and places that have shaped how I see the world and express myself. Here are my top five artistic inspirations and what makes each one so special to me.
 
 ### 1. **Vincent van Gogh**
@@ -448,12 +444,12 @@ The spontaneity, boldness, and accessibility of street art captivate me. Artists
 
 These five inspirations—Van Gogh’s emotion, Surrealism’s imagination, nature’s beauty, Kahlo’s honesty, and street art’s impact—have each shaped my artistic journey in unique ways. They remind me of the many forms that creativity can take and encourage me to push the boundaries of my own work. Exploring these inspirations has been essential in developing my style, and I’m excited to continue learning from the artists, movements, and environments that inspire me.
 `,
-        visibility: "public",
-      },
-      {
-        userId: "33333333-3333-3333-3333-333333333333",
-        title: "Best Places to Visit in Europe",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '33333333-3333-3333-3333-333333333333',
+    title: 'Best Places to Visit in Europe',
+    content: `
 Europe offers an incredible mix of history, culture, and natural beauty, making it a dream destination for travelers. Here are a few must-visit spots that showcase the continent’s diverse charm.
 
 1. **Paris, France** – The City of Light enchants with its art, fashion, and romance. Visit iconic landmarks like the Eiffel Tower, Louvre, and Notre-Dame, and take a leisurely stroll along the Seine.
@@ -468,12 +464,12 @@ Europe offers an incredible mix of history, culture, and natural beauty, making 
 
 Each of these destinations offers a unique European experience, making them ideal for anyone ready to explore the continent’s rich history and scenic beauty.
 `,
-        visibility: "friends-only",
-      },
-      {
-        userId: "22222222-2222-2222-2222-222222222222",
-        title: "Color Theory in Digital Art",
-        content: `
+    visibility: 'friends-only',
+  },
+  {
+    userId: '22222222-2222-2222-2222-222222222222',
+    title: 'Color Theory in Digital Art',
+    content: `
 Understanding color theory is essential for creating visually engaging digital art. It’s the foundation for choosing colors that evoke specific emotions, create harmony, or add contrast. Here are a few key concepts to get started:
 
 1. **Color Wheel Basics** – The color wheel helps artists identify primary, secondary, and tertiary colors, showing how they relate. Understanding these relationships helps in creating balanced palettes.
@@ -488,12 +484,12 @@ Understanding color theory is essential for creating visually engaging digital a
 
 Mastering color theory allows digital artists to build compelling compositions and convey the right emotions, making it an invaluable tool for any creative.
 `,
-        visibility: "public",
-      },
-      {
-        userId: "11111111-1111-1111-1111-111111111111",
-        title: "Top Programming Books of All Time",
-        content: `
+    visibility: 'public',
+  },
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    title: 'Top Programming Books of All Time',
+    content: `
 For anyone looking to deepen their programming skills, these classic books offer valuable insights into coding, software design, and problem-solving. Here are some must-reads:
 
 1. **"Clean Code" by Robert C. Martin** – This book teaches how to write code that’s not only functional but also clean, readable, and maintainable. It’s essential for any developer aiming to create high-quality software.
@@ -508,12 +504,12 @@ For anyone looking to deepen their programming skills, these classic books offer
 
 Each of these books has shaped the programming world and provides valuable lessons for both new and seasoned developers.
 `,
-        visibility: "friends-only",
-      },
-      {
-        userId: "33333333-3333-3333-3333-333333333333",
-        title: "Building a Travel Blog",
-        content: `
+    visibility: 'friends-only',
+  },
+  {
+    userId: '33333333-3333-3333-3333-333333333333',
+    title: 'Building a Travel Blog',
+    content: `
 Starting a travel blog is a fantastic way to document your adventures, share experiences, and inspire others to explore the world. Whether you’re traveling locally or internationally, creating a successful travel blog takes thoughtful planning and consistent effort. Here’s a step-by-step guide to building a travel blog that stands out and keeps readers coming back.
 
 ### 1. **Define Your Niche and Audience**
@@ -552,12 +548,170 @@ Once you have built a steady readership, consider monetizing your blog. Affiliat
 
 Building a travel blog requires dedication, creativity, and a love for storytelling. By finding your niche, creating quality content, and connecting with readers through social media, you can build a blog that not only showcases your adventures but also inspires others to explore the world. With patience and persistence, your travel blog can become a fulfilling creative outlet—and maybe even a career!
 `,
-        visibility: "public",
+    visibility: 'public',
+  },
+];
+export const attributes = [
+  {
+    name: 'username',
+    displayName: '${username}',
+    required: {
+      roles: ['user'],
+    },
+    validations: {
+      length: {
+        min: 3,
+        max: 255,
       },
-    ]);
+      'username-prohibited-characters': {},
+      'up-username-not-idn-homograph': {},
+    },
+    permissions: {
+      view: ['admin', 'user'],
+      edit: ['admin', 'user'],
+    },
+    multivalued: false,
   },
+  {
+    name: 'email',
+    displayName: '${email}',
+    validations: {
+      email: {},
+      length: {
+        max: 255,
+      },
+    },
+    required: {
+      roles: ['user'],
+    },
+    permissions: {
+      view: ['admin', 'user'],
+      edit: ['admin', 'user'],
+    },
+    multivalued: false,
+  },
+  {
+    name: 'firstName',
+    displayName: '${firstName}',
+    validations: {
+      length: {
+        max: 255,
+      },
+      'person-name-prohibited-characters': {},
+    },
+    permissions: {
+      edit: ['admin', 'user'],
+      view: ['admin', 'user'],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: 'lastName',
+    displayName: '${lastName}',
+    validations: {
+      length: {
+        max: 255,
+      },
+      'person-name-prohibited-characters': {},
+    },
+    permissions: {
+      edit: ['admin', 'user'],
+      view: ['admin', 'user'],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: 'phone',
+    displayName: '${phone}',
+    validations: {
+      length: {
+        max: 255,
+      },
+      'person-name-prohibited-characters': {},
+    },
+    permissions: {
+      edit: ['admin', 'user'],
+      view: ['admin', 'user'],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: 'address',
+    displayName: '${address}',
+    validations: {
+      length: {
+        max: 255,
+      },
+      'person-name-prohibited-characters': {},
+    },
+    permissions: {
+      edit: ['admin', 'user'],
+      view: ['admin', 'user'],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+  {
+    name: 'bio',
+    displayName: '${bio}',
+    validations: {},
+    permissions: {
+      edit: ['admin', 'user'],
+      view: ['admin', 'user'],
+    },
+    multivalued: false,
+    annotations: {},
+    group: null,
+  },
+];
+export const groups = [
+  {
+    name: 'user-metadata',
+    displayHeader: 'User metadata',
+    displayDescription: 'Attributes, which refer to user metadata',
+  },
+];
 
-  async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("posts", null, {});
+export const defaultUsersIds = Array.from({ length: 8 }, (_, i) => i + 1).map(
+  (x) =>
+    `${x}${x}${x}${x}${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}-${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}${x}`
+);
+export const friendships = [
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    friendId: '22222222-2222-2222-2222-222222222222',
+    status: 'pending',
   },
-};
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    friendId: '33333333-3333-3333-3333-333333333333',
+    status: 'accepted',
+  },
+  {
+    userId: '11111111-1111-1111-1111-111111111111',
+    friendId: '44444444-4444-4444-4444-444444444444',
+    status: 'blocked',
+  },
+  {
+    userId: '55555555-5555-5555-5555-555555555555',
+    friendId: '11111111-1111-1111-1111-111111111111',
+    status: 'pending',
+  },
+  {
+    userId: '66666666-6666-6666-6666-666666666666',
+    friendId: '11111111-1111-1111-1111-111111111111',
+    status: 'accepted',
+  },
+  {
+    userId: '77777777-7777-7777-7777-777777777777',
+    friendId: '11111111-1111-1111-1111-111111111111',
+    status: 'blocked',
+  },
+];
