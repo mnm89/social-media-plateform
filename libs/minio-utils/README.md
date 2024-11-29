@@ -1,7 +1,7 @@
-# keycloak-utils
+# minio-utils
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Building
 
-Run `nx build keycloak-utils` to build the library.
+Run `nx build minio-utils` to build the library.

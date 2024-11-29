@@ -6,7 +6,7 @@ import {
   uploadFileToMinio,
 } from '../utils';
 import { Storage } from '../models/storage';
-import { extractUserSub } from '@social-media-platform/keycloak-utils';
+import { extractUserSub } from 'libs/keycloak-utils-old';
 import { cache, keycloak, minio, upload } from '../config';
 
 const router = express.Router();

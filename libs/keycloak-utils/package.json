@@ -1,0 +1,13 @@
+{
+  "name": "@social-media-platform/keycloak-utils",
+  "version": "0.0.1",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "tslib": "^2.3.0",
+    "dotenv": "^16.4.5",
+    "keycloak-connect": "^26.0.6",
+    "express": "~4.18.1",
+    "express-session": "^1.18.1"
+  }
+}

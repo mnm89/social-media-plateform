@@ -101,100 +101,7 @@ services:
       keycloak-db:
         condition: service_healthy
     volumes:
-      - ./keycloak-realm-config/:/opt/keycloak/data/import/ # Import realm files
-
-  api-gateway:
-    container_name: api-gateway
-    build: ./api-gateway
-    ports:
-      - '80:3000'
-    environment:
-      - SESSION_SECRET=session_secret
-      - KEYCLOAK_SERVER_URL=http://keycloak:8080
-      - KEYCLOAK_REALM=social-media-platform
-      - KEYCLOAK_CLIENT_ID=web-client
-      - USER_SERVICE_URL=http://user-service:3000
-      - POST_SERVICE_URL=http://post-service:3000
-      - FILE_SERVICE_URL=http://file-service:3000
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      user-service:
-        condition: service_started
-      post-service:
-        condition: service_started
-      file-service:
-        condition: service_started
-
-  user-service:
-    container_name: user-service
-    build: ./user-service
-    # ports:
-    #   - "3001:3000"
-    environment:
-      - DATABASE_URL=postgres://user_user:user_password@user-db/user_service
-      - SESSION_SECRET=session_secret
-      - KEYCLOAK_SERVER_URL=http://keycloak:8080
-      - KEYCLOAK_REALM=social-media-platform
-      - KEYCLOAK_CLIENT_ID=user-management-service
-      - KEYCLOAK_CLIENT_SECRET=YXbgBO3JcrBOqfpzoMfQf2gPnfZrBTuw
-      - KEYCLOAK_WEB_CLIENT_ID=web-client
-      - FILE_SERVICE_URL=http://file-service:3000
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      user-db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  post-service:
-    container_name: post-service
-    build: ./post-service
-    # ports:
-    #   - "3002:3000"
-    environment:
-      - DATABASE_URL=postgres://post_user:post_password@post-db/post_service
-      - SESSION_SECRET=session_secret
-      - KEYCLOAK_SERVER_URL=http://keycloak:8080
-      - KEYCLOAK_REALM=social-media-platform
-      - KEYCLOAK_CLIENT_ID=post-management-service
-      - KEYCLOAK_CLIENT_SECRET=wE1FPnBaMbd2GkcyyqQFO3s8Y7gfepk3
-      - USER_SERVICE_URL=http://user-service:3000
-      - FILE_SERVICE_URL=http://file-service:3000
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      post-db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  file-service:
-    container_name: file-service
-    build: ./file-service
-    # ports:
-    #   - "3003:3000"
-    environment:
-      - DATABASE_URL=postgres://file_user:file_password@file-db/file_service
-      - KEYCLOAK_SERVER_URL=http://keycloak:8080
-      - KEYCLOAK_REALM=social-media-platform
-      - KEYCLOAK_CLIENT_ID=file-management-service
-      - KEYCLOAK_CLIENT_SECRET=X9Lq1PkArTY7Mnb8GcX2Fv4Qo6ZJepW3
-      - SESSION_SECRET=session_secret
-      - MINIO_ENDPOINT=minio
-      - MINIO_PORT=9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_BUCKET_NAME=public
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      file-db:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - ./realm.json:/opt/keycloak/data/import/social-media-platform.json
 
   minio:
     container_name: minio
@@ -239,11 +146,106 @@ services:
       retries: 3
       start_period: 5s
 
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+    ports:
+      - '80:3000'
+    environment:
+      - SESSION_SECRET=session_secret
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=social-media-platform
+      - KEYCLOAK_CLIENT_ID=web-client
+      - USER_SERVICE_URL=http://user-service:3000
+      - POST_SERVICE_URL=http://post-service:3000
+      - FILE_SERVICE_URL=http://file-service:3000
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      post-service:
+        condition: service_started
+      file-service:
+        condition: service_started
+
+  user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://user_user:user_password@user-db/user_service
+      - SESSION_SECRET=session_secret
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=social-media-platform
+      - KEYCLOAK_CLIENT_ID=user-management-service
+      - KEYCLOAK_CLIENT_SECRET=YXbgBO3JcrBOqfpzoMfQf2gPnfZrBTuw
+      - KEYCLOAK_WEB_CLIENT_ID=web-client
+      - FILE_SERVICE_URL=http://file-service:3000
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      user-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  post-service:
+    container_name: post-service
+    build:
+      context: .
+      dockerfile: ./apps/post-service/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://post_user:post_password@post-db/post_service
+      - SESSION_SECRET=session_secret
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=social-media-platform
+      - KEYCLOAK_CLIENT_ID=post-management-service
+      - KEYCLOAK_CLIENT_SECRET=wE1FPnBaMbd2GkcyyqQFO3s8Y7gfepk3
+      - USER_SERVICE_URL=http://user-service:3000
+      - FILE_SERVICE_URL=http://file-service:3000
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      post-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  file-service:
+    container_name: file-service
+    build:
+      context: .
+      dockerfile: ./apps/file-service/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://file_user:file_password@file-db/file_service
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=social-media-platform
+      - KEYCLOAK_CLIENT_ID=file-management-service
+      - KEYCLOAK_CLIENT_SECRET=X9Lq1PkArTY7Mnb8GcX2Fv4Qo6ZJepW3
+      - SESSION_SECRET=session_secret
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET_NAME=public
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      file-db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   recommendation-service:
     container_name: recommendation-service
-    build: ./recommendation-service
-    # ports:
-    #   - "3005:3000"
+    build:
+      context: .
+      dockerfile: ./apps/recommendation-service/Dockerfile
     depends_on:
       - redis
       - rabbitmq

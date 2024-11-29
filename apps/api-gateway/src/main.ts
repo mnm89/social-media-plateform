@@ -1,5 +1,5 @@
+import { KeycloakSessionConfig } from '@social-media-platform/keycloak-utils';
 import express from 'express';
-import { KeycloakSessionConfig } from '@social-media-platform/common-config';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const host = process.env.HOST ?? 'localhost';

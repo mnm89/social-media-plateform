@@ -4,5 +4,17 @@
   "sourceRoot": "libs/keycloak-utils/src",
   "projectType": "library",
   "tags": [],
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/keycloak-utils",
+        "tsConfig": "libs/keycloak-utils/tsconfig.lib.json",
+        "packageJson": "libs/keycloak-utils/package.json",
+        "main": "libs/keycloak-utils/src/index.ts",
+        "assets": ["libs/keycloak-utils/*.md"]
+      }
+    }
+  }
 }

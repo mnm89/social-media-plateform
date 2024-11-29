@@ -1,0 +1,12 @@
+{
+  "name": "@social-media-platform/database-utils",
+  "version": "0.0.1",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "sequelize-typescript": "^2.1.6",
+    "tslib": "^2.3.0",
+    "umzug": "^3.8.2",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4"
+  }
+}

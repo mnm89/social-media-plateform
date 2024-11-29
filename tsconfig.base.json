@@ -15,12 +15,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@social-media-platform/common-config": [
-        "libs/common-config/src/index.ts"
+      "@social-media-platform/cache-utils": ["libs/cache-utils/src/index.ts"],
+      "@social-media-platform/database-utils": [
+        "libs/database-utils/src/index.ts"
       ],
       "@social-media-platform/keycloak-utils": [
         "libs/keycloak-utils/src/index.ts"
-      ]
+      ],
+      "@social-media-platform/minio-utils": ["libs/minio-utils/src/index.ts"]
     },
     "typeRoots": ["node_modules/@types", "types"]
   },

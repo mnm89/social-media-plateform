@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { MinioConfig } from '@social-media-platform/common-config';
 import Storage from './models/storage';
+import { minio } from './config';
 
 export function getFileTypeFromMimeType(mimetype) {
   if (mimetype.includes('video')) return 'video';
@@ -36,8 +36,7 @@ export async function uploadFileToMinio(
   meta: Record<string, string> = {}
 ) {
   try {
-    const { client } = MinioConfig();
-    await client.fPutObject(
+    await minio.fPutObject(
       storage.get('bucket') as string,
       storage.get('path') as string,
       file.path,
@@ -61,8 +60,7 @@ export async function uploadFileToMinio(
 }
 export async function deleteFileFromMinio(storage: Storage) {
   try {
-    const { client } = MinioConfig();
-    await client.removeObject(
+    await minio.removeObject(
       storage.get('bucket') as string,
       storage.get('path') as string
     );

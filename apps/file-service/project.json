@@ -4,10 +4,6 @@
   "sourceRoot": "apps/file-service/src",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": [
-    "common-config",
-    "keycloak-utils"
-  ],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
