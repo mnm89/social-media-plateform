@@ -6,6 +6,7 @@ import Friendship from './models/friendship';
 import { Op } from 'sequelize';
 import Privacy from './models/privacy';
 import { cache } from './config';
+import { defaultPrivacy } from './constants';
 
 export async function getUserName(id: string) {
   const cached = await cache.get(`user:${id}`);
@@ -75,11 +76,7 @@ export async function isFriendshipRequested(user1, user2) {
   });
   return !!friendship;
 }
-export const defaultPrivacy = [
-  { attribute: 'phone', visibility: 'private' },
-  { attribute: 'address', visibility: 'friends-only' },
-  { attribute: 'bio', visibility: 'public' },
-];
+
 export async function ensureDefaultPrivacySettings(userId) {
   const promises = defaultPrivacy.map(async ({ attribute, visibility }) => {
     const privacy = await Privacy.findOne({ where: { userId, attribute } });

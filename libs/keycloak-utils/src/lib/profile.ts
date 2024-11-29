@@ -19,9 +19,14 @@ export async function ensureUsersProfileAttributes(attributes, groups) {
       }
     );
     if (!response.ok) {
-      console.error('Failed to bootstrap users profile:', response.statusText);
+      console.error(
+        'Failed to update users profile configuration:',
+        response.statusText
+      );
+    } else {
+      console.log('Users profile configuration updated');
     }
   } catch (error) {
-    console.error('Failed to bootstrap users profile:', error);
+    console.error('Failed to update users profile configuration:', error);
   }
 }
