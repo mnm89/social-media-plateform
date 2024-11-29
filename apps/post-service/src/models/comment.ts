@@ -6,7 +6,6 @@ import {
   HasMany,
   BelongsTo,
 } from 'sequelize-typescript';
-import { getUserAvatarUrl, getUserName } from '../utils';
 import Post from './post';
 
 @Table({
@@ -55,40 +54,4 @@ export default class Comment extends Model {
 
   @BelongsTo(() => Post, { as: 'post', foreignKey: 'postId' })
   post!: Post;
-
-  static initializeHooks() {
-    this.addHook('afterFind', async (comments: Comment | Comment[] | null) => {
-      if (!comments) return;
-
-      // Ensure we're working with an array
-      const commentsArray = Array.isArray(comments) ? comments : [comments];
-
-      // Fetch and bind author data for each comment
-      await Promise.all(
-        commentsArray.map(async (comment) => {
-          // Set author fields on the comment instance
-          comment.setDataValue('authorName', await getUserName(comment.userId));
-          comment.setDataValue(
-            'authorAvatar',
-            await getUserAvatarUrl(comment.userId)
-          );
-
-          if (comment.replies && comment.replies.length > 0) {
-            await Promise.all(
-              comment.replies.map(async (reply) => {
-                reply.setDataValue(
-                  'authorName',
-                  await getUserName(reply.userId)
-                );
-                reply.setDataValue(
-                  'authorAvatar',
-                  await getUserAvatarUrl(reply.userId)
-                );
-              })
-            );
-          }
-        })
-      );
-    });
-  }
 }

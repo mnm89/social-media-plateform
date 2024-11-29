@@ -1,6 +1,5 @@
 import { migrator, sequelize } from './config';
-import Post from './models/post';
-import Comment from './models/comment';
+import { initializeModelsHooks } from './hooks';
 
 export default async function bootstrap() {
   await sequelize.authenticate();
@@ -9,6 +8,6 @@ export default async function bootstrap() {
   await migrator.up();
   console.log('Database up to date!');
 
-  Post.initializeHooks();
-  Comment.initializeHooks();
+  await initializeModelsHooks();
+  console.log('Models hooks initialized');
 }

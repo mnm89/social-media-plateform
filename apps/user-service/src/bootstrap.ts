@@ -1,8 +1,8 @@
 import { ensureUsersProfileAttributes } from '@social-media-platform/keycloak-utils';
 import { migrator, sequelize } from './config';
-import Friendship from './models/friendship';
 import { ensureDefaultPrivacySettings } from './utils';
 import { attributes, groups, defaultUsersIds } from './constants';
+import { initializeModelsHooks } from './hooks';
 
 export default async function bootstrap() {
   await sequelize.authenticate();
@@ -11,7 +11,8 @@ export default async function bootstrap() {
   await migrator.up();
   console.log('Database up to date!');
 
-  Friendship.initializeHooks();
+  await initializeModelsHooks();
+  console.log('Models hooks initialized');
 
   await ensureUsersProfileAttributes(attributes, groups);
 

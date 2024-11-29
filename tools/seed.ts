@@ -1,6 +1,8 @@
 import { Sequelize as SequelizeUsers } from 'sequelize-typescript';
 import { Sequelize as SequelizePosts } from 'sequelize-typescript';
 import Post from '../apps/post-service/src/models/post';
+import Comment from '../apps/post-service/src/models/comment';
+import Like from '../apps/post-service/src/models/like';
 import Friendship from '../apps/user-service/src/models/friendship';
 import { friendships, posts } from './data';
 
@@ -18,7 +20,7 @@ async function seed() {
   await Friendship.bulkCreate(friendships);
 
   // Seed Posts
-  POST_DB.addModels([Post]);
+  POST_DB.addModels([Post, Comment, Like]);
   await Post.bulkCreate(posts);
 
   console.log('Databases seeded');

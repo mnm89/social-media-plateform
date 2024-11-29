@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "up": "nx run-many --target=build && docker compose up --build -d"
+    "up": "nx run-many --target=build && docker compose up --build -d",
+    "seed": "ts-node tools/seed.ts"
   },
   "private": true,
   "dependencies": {
