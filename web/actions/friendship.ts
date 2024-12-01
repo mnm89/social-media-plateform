@@ -1,12 +1,14 @@
-"use server";
-import { handleNonOkResponse } from "@/lib/api";
-import { cookies } from "next/headers";
+"use server"
 
-export async function removeFriend(friendshipId) {
-  const accessToken = (await cookies()).get("access_token")?.value;
+import { cookies } from "next/headers"
+
+import { handleNonOkResponse } from "@/lib/api"
+
+export async function removeFriend(friendshipId: string) {
+  const accessToken = (await cookies()).get("access_token")?.value
 
   if (!accessToken) {
-    throw new Error("No access token found");
+    throw new Error("No access token found")
   }
   const response = await fetch(
     `${process.env.API_GATEWAY_URL}/friendships/${friendshipId}`,
@@ -17,16 +19,16 @@ export async function removeFriend(friendshipId) {
         Authorization: "Bearer " + accessToken,
       },
     }
-  );
-  if (response.ok) return true;
+  )
+  if (response.ok) return true
 
-  throw await handleNonOkResponse(response);
+  throw await handleNonOkResponse(response)
 }
-export async function acceptFriend(friendshipId) {
-  const accessToken = (await cookies()).get("access_token")?.value;
+export async function acceptFriend(friendshipId: string) {
+  const accessToken = (await cookies()).get("access_token")?.value
 
   if (!accessToken) {
-    throw new Error("No access token found");
+    throw new Error("No access token found")
   }
   const response = await fetch(
     `${process.env.API_GATEWAY_URL}/friendships/accept/${friendshipId}`,
@@ -37,16 +39,16 @@ export async function acceptFriend(friendshipId) {
         Authorization: "Bearer " + accessToken,
       },
     }
-  );
-  if (response.ok) return response.json();
+  )
+  if (response.ok) return response.json()
 
-  throw await handleNonOkResponse(response);
+  throw await handleNonOkResponse(response)
 }
-export async function blockFriend(friendshipId) {
-  const accessToken = (await cookies()).get("access_token")?.value;
+export async function blockFriend(friendshipId: string) {
+  const accessToken = (await cookies()).get("access_token")?.value
 
   if (!accessToken) {
-    throw new Error("No access token found");
+    throw new Error("No access token found")
   }
   const response = await fetch(
     `${process.env.API_GATEWAY_URL}/friendships/block/${friendshipId}`,
@@ -57,16 +59,16 @@ export async function blockFriend(friendshipId) {
         Authorization: "Bearer " + accessToken,
       },
     }
-  );
-  if (response.ok) return response.json();
+  )
+  if (response.ok) return response.json()
 
-  throw await handleNonOkResponse(response);
+  throw await handleNonOkResponse(response)
 }
-export async function requestFriend(friendId) {
-  const accessToken = (await cookies()).get("access_token")?.value;
+export async function requestFriend(friendId: string) {
+  const accessToken = (await cookies()).get("access_token")?.value
 
   if (!accessToken) {
-    throw new Error("No access token found");
+    throw new Error("No access token found")
   }
   const response = await fetch(
     `${process.env.API_GATEWAY_URL}/friendships/request`,
@@ -78,8 +80,8 @@ export async function requestFriend(friendId) {
       },
       body: JSON.stringify({ friendId }),
     }
-  );
-  if (response.ok) return response.json();
+  )
+  if (response.ok) return response.json()
 
-  throw await handleNonOkResponse(response);
+  throw await handleNonOkResponse(response)
 }

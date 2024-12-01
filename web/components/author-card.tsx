@@ -1,13 +1,21 @@
-"use client";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "../auth-provider";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { requestFriend } from "@/actions/friendship";
+"use client"
 
-export default function ProfileCard({ profile }) {
+import { useTransition } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { requestFriend } from "@/actions/friendship"
+
+import { Profile } from "@/types/commons"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { useAuth } from "@/components/auth-provider"
+
+interface Props {
+  profile: Profile
+}
+
+export default function AuthorCard({ profile }: Props) {
   const {
     avatar,
     firstName,
@@ -19,22 +27,23 @@ export default function ProfileCard({ profile }) {
     isFriendshipExists,
     isFriend,
     id,
-  } = profile;
-  const { currentUser } = useAuth();
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  } = profile
+  console.log(profile)
+  const { currentUser } = useAuth()
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const requestFriendship = () => {
     startTransition(async () => {
       try {
-        await requestFriend(id);
-        router.refresh();
+        await requestFriend(id)
+        router.refresh()
       } catch (err) {
-        console.error("Error requesting friend:", err);
+        console.error("Error requesting friend:", err)
         // toast error
       }
-    });
-  };
+    })
+  }
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-4">
       <Card className="p-6 flex items-center space-x-4">
@@ -89,20 +98,15 @@ export default function ProfileCard({ profile }) {
           <h2 className="text-xl font-semibold">Social Links</h2>
           <div className="space-y-2">
             {socialLinks.map((link) => (
-              <Button
-                as="a"
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                key={link.platform}
-                className="w-full"
-              >
-                Follow on {link.platform}
+              <Button asChild key={link.platform} className="w-full">
+                <Link href={link.url} target="_blank" rel="noopener noreferrer">
+                  Follow on {link.platform}
+                </Link>
               </Button>
             ))}
           </div>
         </Card>
       )}
     </div>
-  );
+  )
 }

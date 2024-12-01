@@ -47,7 +47,10 @@ export async function getFriends(token: string) {
   throw await handleNonOkResponse(response)
 }
 
-export async function getPublicProfile(token: string, userId: string) {
+export async function getPublicProfile(
+  token: string | undefined,
+  userId: string
+) {
   const response = await fetch(
     `${process.env.API_GATEWAY_URL}/public-profiles/${userId}`,
     {

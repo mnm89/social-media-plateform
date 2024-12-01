@@ -1,4 +1,4 @@
-import { Link } from "lucide-react"
+import Link from "next/link"
 import MarkdownIt from "markdown-it"
 
 import { getPublicPosts } from "@/lib/api"
@@ -20,7 +20,7 @@ const PostCard = ({ post }: any) => {
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
         <Link
-          href={"/profiles/" + post.userId}
+          href={"/authors/" + post.userId}
           className="text-sm text-gray-500 hover:underline"
         >
           By {post.authorName}
@@ -55,7 +55,9 @@ export default async function IndexPage() {
           Become a member of our community and benefit from more private content
         </p>
       </div>
-      <h1 className="text-3xl font-bold mb-8">Public Posts </h1>
+      <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        Public Posts
+      </h1>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post: any) => (
           <PostCard key={post.id} post={post} />
