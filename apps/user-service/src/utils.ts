@@ -1,12 +1,12 @@
+import { cache } from './config';
+import { defaultPrivacy } from './constants';
+import Friendship from './models/friendship';
+import Privacy from './models/privacy';
 import {
   getAccessToken,
   getKeycloakUser,
 } from '@social-media-platform/keycloak-utils';
-import Friendship from './models/friendship';
 import { Op } from 'sequelize';
-import Privacy from './models/privacy';
-import { cache } from './config';
-import { defaultPrivacy } from './constants';
 
 export async function getUserName(id: string) {
   const cached = await cache.get(`user:${id}`);
@@ -20,7 +20,7 @@ export async function getUserName(id: string) {
 
 export async function getUserAvatarUrl(id: string) {
   const cached = await cache.get(`avatar:${id}`);
-  if (cache) return JSON.parse(cached).url;
+  if (cached) return JSON.parse(cached).url;
   const token = await getAccessToken();
   const response = await fetch(
     `${process.env.FILE_SERVICE_URL}/avatars/${id}`,
