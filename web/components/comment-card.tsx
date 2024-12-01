@@ -1,13 +1,86 @@
-"use client";
-import CommentReplyModal from "@/components/modals/reply-modal";
-import { Card, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { formatDate } from "@/lib/date";
-import Link from "next/link";
-export default function CommentCard({ comment, postId }) {
-  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+"use client"
+
+import { useState, useTransition } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { replyToComment } from "@/actions/post"
+
+import { Comment } from "@/types/commons"
+import { formatDate } from "@/lib/date"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardFooter } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+
+interface ModalProps {
+  commentId: string
+  postId: string
+  isOpen: boolean
+  onClose: () => void
+}
+
+function ReplyModal({ commentId, postId, isOpen, onClose }: ModalProps) {
+  const [replyText, setReplyText] = useState("")
+  const router = useRouter()
+
+  const [isPending, startTransition] = useTransition()
+
+  async function handleReplySubmit() {
+    if (!replyText.trim()) return
+
+    startTransition(async () => {
+      try {
+        await replyToComment(postId, commentId, replyText)
+        setReplyText("")
+        router.refresh()
+        onClose()
+      } catch (err) {
+        console.error("Error adding comment:", err)
+        // toast error
+      }
+    })
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Reply to Comment</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Write your reply..."
+            className="w-full"
+          />
+        </div>
+        <DialogFooter>
+          <Button disabled={isPending} onClick={handleReplySubmit}>
+            {isPending ? "Submitting ..." : "Submit Reply"}
+          </Button>
+          <Button variant="outline" disabled={isPending} onClick={onClose}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+interface Props {
+  comment: Comment
+}
+
+export default function CommentCard({ comment }: Props) {
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false)
 
   return (
     <>
@@ -110,12 +183,12 @@ export default function CommentCard({ comment, postId }) {
           </Button>
         </CardFooter>
       </Card>
-      <CommentReplyModal
+      <ReplyModal
         commentId={comment.id}
-        postId={postId}
+        postId={comment.postId}
         isOpen={isReplyModalOpen}
         onClose={() => setIsReplyModalOpen(false)}
       />
     </>
-  );
+  )
 }

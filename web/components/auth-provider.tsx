@@ -10,18 +10,19 @@ import React, {
 import { useRouter } from "next/navigation"
 import { logoutAction } from "@/actions/auth"
 
+import { TokenContent } from "@/types/token"
 import { parseToken } from "@/lib/token"
 import useTokenManagement from "@/hooks/use-token-management"
 
 interface IAuthContext {
-  currentUser?: Record<string, string> | null
+  currentUser?: TokenContent | null
   logout?: () => void
 }
 
 const AuthContext = createContext<IAuthContext>({})
 
 interface AuthProviderProps {
-  user?: Record<string, string> | null
+  user: TokenContent | null
   children: React.ReactNode
 }
 

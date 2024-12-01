@@ -1,3 +1,5 @@
+import { Post } from "@/types/commons"
+
 export async function handleNonOkResponse(response: Response) {
   const error = new Error()
   error.name = response.statusText
@@ -8,14 +10,23 @@ export async function handleNonOkResponse(response: Response) {
   }
   return error
 }
-export async function getPublicPosts() {
+export async function getPublicPosts(): Promise<Post[]> {
   const response = await fetch(`${process.env.API_GATEWAY_URL}/public-posts`)
 
   if (response.ok) return response.json()
   throw await handleNonOkResponse(response)
 }
+export async function getPublicPost(id: string): Promise<Post> {
+  const response = await fetch(
+    `${process.env.API_GATEWAY_URL}/public-posts/${id}`
+  )
 
-export async function getPosts(token: string) {
+  if (response.ok) return response.json()
+  throw await handleNonOkResponse(response)
+}
+
+export async function getPosts(token: string | undefined): Promise<Post[]> {
+  if (!token) return getPublicPosts()
   const response = await fetch(`${process.env.API_GATEWAY_URL}/posts`, {
     headers: {
       Authorization: "Bearer " + token,
@@ -25,7 +36,11 @@ export async function getPosts(token: string) {
   if (response.ok) return response.json()
   throw await handleNonOkResponse(response)
 }
-export async function getPost(token: string, id: string) {
+export async function getPost(
+  token: string | undefined,
+  id: string
+): Promise<Post> {
+  if (!token) return getPublicPost(id)
   const response = await fetch(`${process.env.API_GATEWAY_URL}/posts/${id}`, {
     headers: {
       Authorization: "Bearer " + token,
